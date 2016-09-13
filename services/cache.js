@@ -110,7 +110,6 @@ exp.webcache.get = function(req, res, next) {
 	exp.get(key, (err, string) => {
 		/* 命中缓存 */
 		if (!err && string) {
-			console.log(`${key} 命中!`)
 			let type = req.headers['content-type']
 			if (type)
 				res.set('Content-Type', type)

@@ -3,7 +3,7 @@
 var express = require('express')
 var path = require('path')
 var favicon = require('serve-favicon')
-var logger = require('morgan')
+var morgan = require('morgan')
 var cookieParser = require('cookie-parser')
 var bodyParser = require('body-parser')
 var xmlBodyParser = require('express-xml-parser')
@@ -25,6 +25,7 @@ global.Unify = require('./unify')
 
 /* app 实例 */
 var app = express()
+var logger = log4js.getLogger("access")
 
 /* 设置模板引擎 */
 app.set('views', path.join(__dirname, 'views'))
@@ -35,9 +36,18 @@ app.set('x-powered-by', true)
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 /* 设置中间件 */
-var logger = log4js.getLogger("access")
-app.use(log4js.connectLogger(logger))
-//app.use(logger('combined'))
+/* 替换真正ip */
+app.use((req, res, next) => {
+    const ip = Utility.clientIpV4(req)
+    Object.defineProperty(req, 'ip', {
+        configurable: true,
+        enumerable: true,
+        get: ()=>{return ip}
+    })
+    next()
+})
+app.use(log4js.connectLogger(logger))   /* log4j日志 */
+app.use(morgan('common'))               /* morgan日志 */
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: true
@@ -57,6 +67,9 @@ app.use(express.static(path.join(__dirname, 'public')))
 var routes = require('./routes')
 app.use(routes)
 
+
+var logger = log4js.getLogger('[app]')
+
 /* 404 */
 app.use(function(req, res, next) {
     const ip = Utility.clientIpV4(req)
@@ -68,6 +81,7 @@ app.use(function(req, res, next) {
 /* 错误处理-开发环境 */
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        logger.warn(err)
         res.status(err.status || 500)
         res.render('error', {
             message: err.message,
@@ -78,6 +92,7 @@ if (app.get('env') === 'development') {
 
 /* 错误处理-生产环境 */
 app.use(function(err, req, res, next) {
+    logger.warn(err)
     res.status(err.status || 500)
     res.render('error', {
         message: err.message,
