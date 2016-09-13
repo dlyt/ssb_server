@@ -90,8 +90,8 @@ Node.js ORM 库，参考[官方文档](http://docs.sequelizejs.com/en/latest/)�
 
 ### ECMAScript 2016
 
-nodejs 5.x 支持 es6有限 需要启动命令加 --harmony_destructuring 等参数才可使用
-nodejs 6.x 不需要加参数,加了参数反而不能启动
+nodejs 5.x 支持 es6有限 需要启动命令加 --harmony_destructuring 等参数才可使用  
+nodejs 6.x 不需要加参数,加了参数反而不能启动  
 
 + 使用 class
 

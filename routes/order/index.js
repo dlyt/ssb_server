@@ -86,7 +86,7 @@ function order(req, res) {
 
             if (!order)
                 return res.json(Conf.promise('2000'))
-
+    
             if (!order.have_pay) {
                 var [err, update] = yield Unify.order.refresh(order, $)
                 if (err) throw err

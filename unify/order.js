@@ -75,10 +75,9 @@ function order_refresh(order, cb) {
 			let opts = {
 				transaction: transaction
 			}
-
             /* 先锁 */
             order.last_update = new Date()
-            var [err, order] = yield order.save(opts)
+            [err, order] = yield order.save(opts)
             if (err) throw err
 
             /* 再查 */
@@ -112,6 +111,13 @@ function order_refresh(order, cb) {
 			order.have_pay = true
 			var [err, updated] = yield order.save(opts)
 			if (err) throw err
+
+            /* 数量验证 */
+            var [err, count] = yield order.countOrderDetails(opts)
+			if (err) throw err
+            console.log(count)
+            if (count !== 0)
+                throw new Error('门票的detail数量非法!')
 
             /* 查询比赛所属系列 */
             let bigMatchSerie_id , dailyMatchSerie_id, hex_key
