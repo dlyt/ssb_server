@@ -4,7 +4,7 @@ const lightco = require('lightco')
 const express = require('express')
 const moment = require('moment')
 const router = express.Router()
-const logger = log4js.getLogger('[ticket]')
+const logger = log4js.getLogger('[routes-ticket]')
 const toInt = Utility.toInt
 const verifyNo = Unify.product.verifyNo
 
@@ -29,7 +29,7 @@ function tickets(req, res) {
             let opts = {
                 where: {name: 'ticket_show_expire'}
             }
-            /* 查找已使用显示的天数 */
+            /* 查找显示已使用天数的设置 */
             var [err, settings] = yield GlobalSetting.findOne(opts)
             if (err) throw err
 
@@ -37,8 +37,9 @@ function tickets(req, res) {
             if (settings && settings.int)
                 show_day = settings.int
 
+            /* 小于此时间的不显示 */
             const timeline = new Date(moment().subtract(show_day, 'days'))
-            console.log(timeline)
+
             opts = {
                 where: {
                     $or:[

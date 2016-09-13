@@ -7,17 +7,15 @@ const router = express.Router()
 const logger = log4js.getLogger('[routes-big-serie]')
 const toInt = Utility.toInt
 const dateFormat = Utility.dateFormat
+const webcache = Services.cache.webcache
 
-router.get('/', series)
-router.get('/hot', hot)
-router.get('/:id', serie)
-router.get('/detail/:id', serie_detail)
-router.get('/match/:id', serie_match)
-router.get('/join/:id', serie_match)
-router.get('/map/:id', serie_map)
-/* 临时 */
-// router.get('/temp1/:id', serie_temp1)
-// router.get('/temp2/:id', serie_temp2)
+router.get('/', webcache.get, series)
+router.get('/hot', webcache.get, hot)
+router.get('/:id', webcache.get, serie)
+router.get('/detail/:id', webcache.get, serie_detail)
+router.get('/match/:id', webcache.get, serie_match)
+router.get('/join/:id', webcache.get, serie_match)
+router.get('/map/:id', webcache.get, serie_map)
 
 const { User,
         BigMatchSerie,
@@ -95,7 +93,11 @@ function series(req, res) {
             var [err, series] = yield BigMatchSerie.scope('show', 'detail').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', series))
+            let pack = Conf.promise('0', series)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -113,6 +115,26 @@ function hot(req, res) {
             const max = Conf.const.big.serie.limit_max
 
             let opts = {
+                include: [{
+                    model: Organization,
+                    attributes: {exclude: ['last_update']},
+                    include: [{
+                        model: Casino,
+                        attributes: {exclude: ['contact_phone', 'contact_person', 'last_update', 'intorduction']},
+                        include: [{
+                            model: Address,
+                            attributes: {exclude: ['last_update']},
+                            include: [{
+                                model: City,
+                                attributes: {exclude: ['last_update']},
+                                include: [{
+                                    model: Country,
+                                    attributes: {exclude: ['last_update']}
+                                }]
+                            }]
+                        }]
+                    }]
+                }],
                 order: [['start_date', 'ASC'] , ['hot_level', 'ASC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
@@ -127,7 +149,11 @@ function hot(req, res) {
             var [err, series] = yield BigMatchSerie.scope('show', 'detail').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', series))
+            let pack = Conf.promise('0', series)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -145,7 +171,11 @@ function serie(req, res) {
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findById(id)
             if (err) throw err
 
-            res.json(Conf.promise('0', serie))
+            let pack = Conf.promise('0', serie)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -185,7 +215,11 @@ function serie_detail(req, res) {
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findById(id, opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', serie))
+            let pack = Conf.promise('0', serie)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -206,15 +240,19 @@ function serie_match(req, res) {
                 order: [['last_update', req.query.order || 'DESC']],
                 where : {'bigMatchSerie_id': id},
                 offset: toInt(req.query.offset, 0),
-                limit: toInt(req.query.limit, def)
+                //limit: toInt(req.query.limit, def)
             }
 
-            opts.limit = opts.limit > max ? max : opts.limit
+            //opts.limit = opts.limit > max ? max : opts.limit
 
             var [err, matchs] = yield BigMatch.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', matchs))
+            let pack = Conf.promise('0', matchs)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -256,7 +294,11 @@ function serie_map(req, res) {
             var [err, matchs] = yield BigMatch.findAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', filter(matchs)))
+            let pack = Conf.promise('0', filter(matchs))
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)

@@ -14,6 +14,7 @@ const exp = {
 	refresh: refresh
 }
 
+/* 不同支付方式 有不同查询订单方法 */
 const refreshs = [
 	wechat_refresh,		/* 0 wechat */
 	null,				/* 1 aliPay */
@@ -27,6 +28,7 @@ function refresh(payment, cb) {
 	return func(payment, cb)
 }
 
+/* 微信刷新订单 */
 function wechat_refresh(payment, cb) {
 	const data = {
 		out_trade_no: payment.payment_No

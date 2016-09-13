@@ -14,10 +14,18 @@ Date.prototype.toJSON = function(){
 /* npm install --unsafe-perm */
 utility.des40 = require('./des40')
 
+/* 是否是有效时间 */
 utility.invalidDate = function(date) {
     return isNaN(date.getTime())
 }
 
+/*
+    格式化id
+    nhead为头部要显示的长度
+    ntail为尾部要显示的长度
+    格式化手机号 13800138000 nhead=3 nhead=4
+    结果: 138****8000
+ */
 utility.fmtId = function(id, nhead, ntail) {
     if (!id || typeof(id) != 'string')
         return id
@@ -40,23 +48,30 @@ utility.fmtId = function(id, nhead, ntail) {
     return prefix + star + padding
 }
 
+/*  安全的将一个字符串数字 转为int
+    def 为当转换失败时，赋值的默认值
+*/
 utility.toInt = function(v, def) {
     let n = parseInt(v)
 	return isNaN(n) ? (def || 0) : n
 }
 
+/* 4位随机数字 */
 utility.rand4 = function() {
 	return util.format('%d0000', Math.floor(Math.random() * 9999)).substr(0, 4)
 }
 
+/* 6位随机数字 */
 utility.rand6 = function() {
 	return util.format('%d000000', Math.floor(Math.random() * 999999)).substr(0, 6)
 }
 
+/* uuid */
 utility.uuid = function() {
 	return uuid.v4()
 }
 
+/* 返回当前的timestamp */
 utility.timestamp = function() {
 	return Math.floor(Date.now())
 }
@@ -69,12 +84,16 @@ utility.clientIpV4 = function(req) {
 	return ip.split(':').pop()
 }
 
+/* 判断手机号 */
 utility.checkPhone = function(phone) {
 	if(!(/^1[3|4|5|7|8]\d{9}$/.test(phone)))
         return false
 	return true
 }
 
+/*  32位随机字符串
+    length 需要的字符串长度
+ */
 utility.noncestr = function(length) {
     length = length || 32
     var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -86,6 +105,7 @@ utility.noncestr = function(length) {
     return nonces.join('')
 }
 
+/* 唯一订单id process.env.ID 一定要定义 */
 let order_tick = 0
 utility.orderId = function() {
 	order_tick = (order_tick + 1) % 1000
@@ -94,7 +114,7 @@ utility.orderId = function() {
     return '01' + parseInt(+new Date(), 10) + id + append
 }
 
-
+/* 唯一流水单id process.env.ID 一定要定义 */
 let payment_tick = 0
 utility.paymentId = function() {
 	payment_tick = (payment_tick + 1) % 1000
@@ -103,6 +123,7 @@ utility.paymentId = function() {
     return '02' + parseInt(+new Date(), 10) + id + append
 }
 
+/* 日期格式化 */
 utility.dateFormat = function(date, format) {
     format = format || 'MMddhhmm'
     var o = {
@@ -128,6 +149,7 @@ utility.dateFormat = function(date, format) {
     return format
 }
 
+/* 检查身份证号 */
 utility.checkIdCard = function(card) {
     if (!card || typeof card != 'string')
         return false
@@ -233,6 +255,7 @@ utility.checkIdCard = function(card) {
     }
 }
 
+/* 检查真实姓名 */
 utility.checkName = function(name) {
 	if (!name || typeof name !== 'string' || name === '')
         return false
@@ -242,6 +265,7 @@ utility.checkName = function(name) {
 	return true
 }
 
+/* 检查护照 */
 utility.checkPassportID = function(id) {
 	if (!id || typeof id !== 'string' || id === '')
         return false
@@ -250,6 +274,7 @@ utility.checkPassportID = function(id) {
 	return true
 }
 
+/* 检查通行证 */
 utility.checkOneWayPermit = function(id) {
 	if (!id || typeof id !== 'string' || id === '')
         return false

@@ -11,4 +11,4 @@ router.use('/ticket', require('./ticket'))
 router.use('/order', require('./order'))
 router.use('/notify', require('./notify'))
 
-module.exports = router;
+module.exports = router

@@ -6,6 +6,7 @@ const _request = require('request')
 const xml2js = require('xml2js')
 var logger = log4js.getLogger('[services-wechat-request]')
 
+/* ssl统一请求 */
 const request = {
 	sign: sign,
 	verify: verify,
@@ -70,6 +71,7 @@ function attach(obj, app, merchant, device){
     return obj
 }
 
+/* 按微信要求的签名 */
 function sign(obj, secret) {
 	let dup = _.clone(obj)
 	delete dup.sign
@@ -84,6 +86,7 @@ function sign(obj, secret) {
 	return crypto.createHash('md5').update(str, 'utf8').digest('hex').toUpperCase()
 }
 
+/* obj转xml */
 function easy2xml(obj) {
     let lines = []
     lines.push('<xml>')

@@ -4,7 +4,7 @@ const express = require('express')
 const router = express.Router()
 const request = require('request')
 const lightco = require('lightco')
-const logger = log4js.getLogger('[user-register]')
+const logger = log4js.getLogger('[user-info-bind]')
 
 const cache = Services.cache
 const sms = Services.sms
@@ -44,7 +44,7 @@ function get_smscode(req, res) {
             var [err, count] = yield cache.hget(`BIND_${mobile}`, 'sms_count', $)
             if (err) throw err
 
-            count = parseInt(count || '0')
+            count = Utility.toInt(count)
             if (count >= max) return res.json(Conf.promise('1001'))
 
             const code = Utility.rand4()

@@ -3,7 +3,7 @@
 const express = require('express')
 const router = express.Router()
 const lightco = require('lightco')
-const logger = log4js.getLogger('[user-register]')
+const logger = log4js.getLogger('[user-vip]')
 
 const { User,
  		CasinoVip } = Models

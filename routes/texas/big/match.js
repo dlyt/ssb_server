@@ -7,11 +7,12 @@ const router = express.Router()
 const logger = log4js.getLogger('[routes-big-match]')
 const toInt = Utility.toInt
 const invalidDate = Utility.invalidDate
+const webcache = Services.cache.webcache
 
-router.get('/', matchs)
-router.get('/:id', match)
-router.get('/result/:id', match_result)
-router.get('/setting/:id', match_setting)
+router.get('/', webcache.get, matchs)
+router.get('/:id', webcache.get, match)
+router.get('/result/:id', webcache.get, match_result)
+router.get('/setting/:id', webcache.get, match_setting)
 router.post('/join/:id', Services.token.decode, match_join)
 
 const { User,
@@ -41,7 +42,11 @@ function matchs(req, res) {
             var [err, matchs] = yield BigMatch.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', matchs))
+            let pack = Conf.promise('0', matchs)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -58,7 +63,11 @@ function match(req, res) {
             var [err, match] = yield BigMatch.scope('detail').findById(id)
             if (err) throw err
 
-            res.json(Conf.promise('0', match))
+            let pack = Conf.promise('0', match)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -80,7 +89,11 @@ function match_result(req, res) {
             var [err, result] = yield match.getBigMatchResult()
             if (err) throw err
 
-            res.json(Conf.promise('0', result))
+            let pack = Conf.promise('0', result)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -102,7 +115,11 @@ function match_setting(req, res) {
             var [err, setting] = yield MatchSetting.findById(match.matchSetting_id)
             if (err) throw err
 
-            res.json(Conf.promise('0', setting))
+            let pack = Conf.promise('0', setting)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -113,7 +130,6 @@ function match_setting(req, res) {
 
 function match_join(req, res) {
     lightco.run(function*($) {
-        var transaction
         try {
             const S = Sequelize
             const id = toInt(req.params.id)
@@ -202,21 +218,13 @@ function match_join(req, res) {
                 amount: total
             }
 
-            var [err, transaction] = yield sequelize.transaction()
+            var [err, order] = yield Order.create(new_order)
             if (err) throw err
-
-            opts = {transaction: transaction}
-
-            var [err, order] = yield Order.create(new_order, opts)
-            if (err) throw err
-
-            transaction.commit()
 
             res.json(Conf.promise('0', order.order_id))
 
         } catch (e) {
             logger.warn(e)
-            if (transaction) transaction.rollback()
             return res.json(Conf.promise('1'))
         }
     })

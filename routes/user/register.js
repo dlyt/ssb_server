@@ -22,7 +22,7 @@ router.post('/getsmscode', get_smscode)
 router.post('/verifysmscode', verify_smscode)
 router.post('/setpassword', set_password)
 
-
+/* 获取短信码 */
 function get_smscode(req, res) {
     lightco.run(function*($) {
         const mobile = req.body.mobile
@@ -40,7 +40,7 @@ function get_smscode(req, res) {
             var [err, count] = yield cache.hget(`REG_${mobile}`, 'sms_count', $)
             if (err) throw err
 
-            count = parseInt(count || '0')
+            count = Utility.toInt(count)
             if (count >= max) return res.json(Conf.promise('1001'))
 
             const code = Utility.rand4()

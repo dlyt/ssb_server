@@ -48,6 +48,7 @@ function _refresh(payments, cb) {
 				})
 			}
 
+            /* async 并发操作 http://caolan.github.io/async/ */
             var [err, results] = yield async.map(payments, idt, $)
             if (err) throw err
 
@@ -63,14 +64,11 @@ function _refresh(payments, cb) {
     })
 }
 
-
+/* 刷新订单状态 */
 function order_refresh(order, cb) {
 	lightco.run(function*($) {
         var transaction
         try {
-			if (order.have_pay)
-				return cb(null, null)
-
 			var [err, transaction] = yield sequelize.transaction()
             if (err) throw err
 
@@ -78,12 +76,24 @@ function order_refresh(order, cb) {
 				transaction: transaction
 			}
 
-            var [err, payments] = yield order.getPayments(opts)
+            /* 先锁 */
+            order.last_update = new Date()
+            var [err, order] = yield order.save(opts)
+            if (err) throw err
+
+            /* 再查 */
+            if (order.have_pay) {
+                transaction.rollback()
+                return cb(null, null)
+            }
+
+            /* 获取全部支付凭证 */
+            var [err, payments] = yield order.getPayments()
             if (err) throw err
 
             /* 没有支付记录 */
 			if (!payments || !payments.length) {
-				transaction.commit()
+				transaction.rollback()
 				return cb(null, null)
 			}
 
@@ -94,7 +104,7 @@ function order_refresh(order, cb) {
 			let payed_payment = _.find(results, {state: 1})
 
 			if (!payed_payment) {
-				transaction.commit()
+				transaction.rollback()
 				return cb(null, null)
 			}
 
@@ -173,6 +183,7 @@ function order_refresh(order, cb) {
                         have_createSerial: true
                     }
 
+                    /* 创建订单明细 */
                     var [err, detail] = yield OrderDetail.create(new_detail, opts)
                     if (err) return cb(err)
 
@@ -188,14 +199,17 @@ function order_refresh(order, cb) {
                         expire_time: expire_time
                     }
 
+                    /* 创建序列号 */
                     var [err, serial] = yield SerialNumber.create(new_serial, opts)
                     if (err) return cb(err)
 
+                    /* 生成8位序列号 */
                     var [err, code] = yield product_serialNo(serial, hex_key, $)
                     if (err) return cb(err)
 
                     serial.seria_No = code
 
+                    /* 保存 */
                     var [err] = yield serial.save(opts)
                     if (err) return cb(err)
 
@@ -219,6 +233,7 @@ function order_refresh(order, cb) {
     })
 }
 
+/*  判断订单是否可以继续支付 */
 function big_canpay(order, cb) {
     lightco.run(function*($) {
         try {
@@ -257,6 +272,7 @@ function big_canpay(order, cb) {
     })
 }
 
+/*  判断订单是否可以继续支付 */
 function daily_canpay(order, cb) {
     lightco.run(function*($) {
         try {

@@ -9,5 +9,6 @@ conf.log = require('./log')
 conf.user = require('./user')
 conf.const = require('./const')
 conf.wechat = require('./wechat')
+conf.webcache = require('./webcache')
 
 module.exports = conf

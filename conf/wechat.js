@@ -36,6 +36,7 @@ let wechat = {
 			report: 'https://api.mch.weixin.qq.com/payitil/report'
 		}
 	},
+    /* 微信支付成功回调 指向后端服务器 */
 	reply: 'http://121.43.61.192/notify/wechat'
 }
 

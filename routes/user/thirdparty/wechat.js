@@ -3,14 +3,14 @@
 const express = require('express')
 const router = express.Router()
 const lightco = require('lightco')
-const logger = log4js.getLogger('[user-register]')
+const logger = log4js.getLogger('[user-thirdparty]')
 const wechat = Services.wechat
 
 const { User } = Models
 
 router.use('/login', login)
 
-
+/* 微信登陆 */
 function login(req, res) {
     lightco.run(function*($) {
         var transaction
@@ -45,6 +45,7 @@ function login(req, res) {
 
             let created = false
 
+            /* 首次登陆 */
             if (!user) {
                 const new_user = {
                     wechat_unionid: unionid
@@ -52,6 +53,7 @@ function login(req, res) {
                 const opts = {
                     transaction: transaction
                 }
+                /* 创建用户 */
                 var [err, _user] = yield User.create(new_user, opts)
                 if (err) throw err
 

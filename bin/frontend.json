@@ -3,7 +3,7 @@
 		{
 			"name": "frontend-01",
 			"script": "bin/www",
-			"watch": true,
+			"watch": false,
 			"env": {
                 "ID": "01",
 				"NODE_ENV": "production",
@@ -13,7 +13,7 @@
 		{
 			"name": "frontend-02",
 			"script": "bin/www",
-			"watch": true,
+			"watch": false,
 			"env": {
                 "ID": "02",
 				"NODE_ENV": "production",
@@ -23,7 +23,7 @@
 		{
 			"name": "frontend-03",
 			"script": "bin/www",
-			"watch": true,
+			"watch": false,
 			"env": {
                 "ID": "03",
 				"NODE_ENV": "production",
@@ -33,7 +33,7 @@
 		{
 			"name": "frontend-04",
 			"script": "bin/www",
-			"watch": true,
+			"watch": false,
 			"env": {
                 "ID": "04",
 				"NODE_ENV": "production",

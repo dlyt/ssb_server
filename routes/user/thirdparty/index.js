@@ -3,7 +3,6 @@
 const lightco = require('lightco')
 const express = require('express')
 const router = express.Router()
-const logger = log4js.getLogger('[user]')
 
 const {User} = Models
 

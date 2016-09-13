@@ -11,6 +11,7 @@ const auth = {
 	authorize: authorize,
 }
 
+/* wechat 登陆认证 code是客户端发来的 */
 function authorize(code, cb) {
 	const params = {
 		appid: app.appid,

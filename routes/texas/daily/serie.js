@@ -5,12 +5,13 @@ const express = require('express')
 const router = express.Router()
 const logger = log4js.getLogger('[routes-daily-serie]')
 const toInt = Utility.toInt
+const webcache = Services.cache.webcache
 
-router.get('/', series)
-router.get('/hot', hot)
-router.get('/:id', serie)
-router.get('/detail/:id', serie_detail)
-router.get('/match/:id', serie_match)
+router.get('/', webcache.get, series)
+router.get('/hot', webcache.get, hot)
+router.get('/:id', webcache.get, serie)
+router.get('/detail/:id', webcache.get, serie_detail)
+router.get('/match/:id', webcache.get, serie_match)
 
 const { User,
         DailyMatchSerie,
@@ -37,7 +38,11 @@ function series(req, res) {
             var [err, series] = yield DailyMatchSerie.scope('show', 'intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', series))
+            let pack = Conf.promise('0', series)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -98,7 +103,12 @@ function hot(req, res) {
 
             var [err, casinos] = yield Casino.findAndCountAll(opts)
             if (err) throw err
-            res.json(Conf.promise('0', casinos))
+
+            let pack = Conf.promise('0', casinos)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -116,7 +126,11 @@ function serie(req, res) {
             var [err, serie] = yield DailyMatchSerie.scope('show', 'detail').findById(id)
             if (err) throw err
 
-            res.json(Conf.promise('0', serie))
+            let pack = Conf.promise('0', serie)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -156,7 +170,11 @@ function serie_detail(req, res) {
             var [err, serie] = yield DailyMatchSerie.scope('show', 'detail').findById(id, opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', serie))
+            let pack = Conf.promise('0', serie)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -185,7 +203,11 @@ function serie_match(req, res) {
             var [err, matchs] = yield DailyMatch.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', matchs))
+            let pack = Conf.promise('0', matchs)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)

@@ -5,10 +5,11 @@ const express = require('express')
 const router = express.Router()
 const logger = log4js.getLogger('[routes-big-tour]')
 const toInt = Utility.toInt
+const webcache = Services.cache.webcache
 
-router.get('/', tours)
-router.get('/:id', tour_detail)
-router.get('/serie/:id', tour_serie)
+router.get('/', webcache.get, tours)
+router.get('/:id', webcache.get, tour_detail)
+router.get('/serie/:id', webcache.get, tour_serie)
 
 const {User, BigMatchTour, BigMatchSerie} = Models
 
@@ -27,7 +28,11 @@ function tours(req, res) {
             var [err, tours] = yield BigMatchTour.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', tours))
+            let pack = Conf.promise('0', tours)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -44,7 +49,11 @@ function tour_detail(req, res) {
             var [err, tour] = yield BigMatchTour.scope('detail').findById(id)
             if (err) throw err
 
-            res.json(Conf.promise('0', tour))
+            let pack = Conf.promise('0', tour)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -70,7 +79,11 @@ function tour_serie(req, res) {
             var [err, series] = yield BigMatchSerie.scope('show', 'detail').findAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', series))
+            let pack = Conf.promise('0', series)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)

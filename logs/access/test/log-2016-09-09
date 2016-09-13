@@ -1,0 +1,5 @@
+[2016-09-09 20:14:10.397] [INFO] access - ::ffff:127.0.0.1 - - "POST /user/login HTTP/1.1" 200 184 "" "PostmanRuntime/2.4.5"
+[2016-09-09 20:16:20.170] [INFO] access - ::ffff:127.0.0.1 - - "POST /user/login HTTP/1.1" 200 184 "" "PostmanRuntime/2.4.5"
+[2016-09-09 20:16:39.249] [INFO] access - ::ffff:127.0.0.1 - - "GET /user/login HTTP/1.1" 200 48 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+[2016-09-09 20:23:33.983] [INFO] access - ::ffff:127.0.0.1 - - "GET /user/login HTTP/1.1" 404 1614 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+[2016-09-09 20:23:34.107] [INFO] access - ::ffff:127.0.0.1 - - "GET /stylesheets/style.css HTTP/1.1" 304 - "http://127.0.0.1:3000/user/login" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"

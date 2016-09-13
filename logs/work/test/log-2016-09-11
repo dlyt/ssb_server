@@ -1,0 +1,55 @@
+[2016-09-11 15:56:32.793] [INFO] [boot] - env: development
+[2016-09-11 15:57:14.489] [INFO] [boot] - env: development
+[2016-09-11 15:57:22.642] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%E4%B8%AD%E5%9B%BD&city=%E5%8C%97%E4%BA%AC HTTP/1.1" 200 2036 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+[2016-09-11 15:58:03.483] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%E4%B8%AD%E5%9B%BD&city=%E5%8C%97%E4%BA%AC HTTP/1.1" 304 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+[2016-09-11 15:58:35.317] [INFO] access - ::ffff:127.0.0.1 - - "POST /user/login HTTP/1.1" 200 184 "" "PostmanRuntime/2.4.5"
+[2016-09-11 15:59:26.230] [INFO] [boot] - env: development
+[2016-09-11 15:59:50.723] [INFO] access - ::ffff:127.0.0.1 - - "POST /user/login HTTP/1.1" 200 184 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:00:54.084] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%E4%B8%AD%E5%9B%BD&city=%E5%8C%97%E4%BA%AC HTTP/1.1" 304 - "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36"
+[2016-09-11 16:02:25.806] [INFO] [boot] - env: development
+[2016-09-11 16:03:10.136] [INFO] [boot] - env: development
+[2016-09-11 16:03:10.143] [INFO] console - Listening on port 3000
+[2016-09-11 16:03:10.587] [INFO] console - Connection has been established successfully.
+[2016-09-11 16:05:56.370] [INFO] [boot] - env: development
+[2016-09-11 16:08:04.621] [INFO] [boot] - env: development
+[2016-09-11 16:08:19.998] [INFO] access - ::ffff:127.0.0.1 - - "POST /casino/1 HTTP/1.1" 404 1614 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:08:23.194] [INFO] access - ::ffff:127.0.0.1 - - "POST /casino/1 HTTP/1.1" 404 1614 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:08:29.218] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino/1 HTTP/1.1" 200 490 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:09:17.152] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino/27 HTTP/1.1" 200 1406 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:10:15.692] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:10:48.239] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:10:54.584] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:11:14.832] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=-ý HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:12:16.485] [INFO] [boot] - env: development
+[2016-09-11 16:12:23.117] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=-ý HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:14:51.124] [INFO] [boot] - env: development
+[2016-09-11 16:22:39.107] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&city=%e5%8c%97%e4%ba%ac HTTP/1.1" 200 2036 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:23:23.317] [INFO] [boot] - env: development
+[2016-09-11 16:23:24.728] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&city=%e5%8c%97%e4%ba%ac HTTP/1.1" 200 2036 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:23:44.491] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd HTTP/1.1" 200 917 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:24:00.380] [INFO] [boot] - env: development
+[2016-09-11 16:24:01.559] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd HTTP/1.1" 200 3278 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:24:35.170] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd?limit=2 HTTP/1.1" 200 63 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:24:55.382] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&limit=10 HTTP/1.1" 200 6223 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:25:25.099] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&limit=10 HTTP/1.1" 200 6223 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:26:09.031] [INFO] [boot] - env: development
+[2016-09-11 16:26:11.917] [WARN] [routes-casino] - [TypeError: Cannot read property '_pseudo' of undefined]
+TypeError: Cannot read property '_pseudo' of undefined
+    at conformInclude (/Users/wd/git/testServer/node_modules/sequelize/lib/model.js:269:14)
+    at /Users/wd/git/testServer/node_modules/sequelize/lib/model.js:258:15
+    at Array.map (native)
+    at conformOptions (/Users/wd/git/testServer/node_modules/sequelize/lib/model.js:257:37)
+    at Model.aggregate (/Users/wd/git/testServer/node_modules/sequelize/lib/model.js:1545:3)
+    at null.<anonymous> (/Users/wd/git/testServer/node_modules/sequelize/lib/model.js:1616:17)
+    at tryCatcher (/Users/wd/git/testServer/node_modules/bluebird/js/release/util.js:16:23)
+    at Promise._settlePromiseFromHandler (/Users/wd/git/testServer/node_modules/bluebird/js/release/promise.js:510:31)
+    at Promise._settlePromise (/Users/wd/git/testServer/node_modules/bluebird/js/release/promise.js:567:18)
+    at Promise._settlePromise0 (/Users/wd/git/testServer/node_modules/bluebird/js/release/promise.js:612:10)
+    at Promise._settlePromises (/Users/wd/git/testServer/node_modules/bluebird/js/release/promise.js:691:18)
+    at Async._drainQueue (/Users/wd/git/testServer/node_modules/bluebird/js/release/async.js:138:16)
+    at Async._drainQueues (/Users/wd/git/testServer/node_modules/bluebird/js/release/async.js:148:10)
+    at Immediate.Async.drainQueues [as _onImmediate] (/Users/wd/git/testServer/node_modules/bluebird/js/release/async.js:17:14)
+    at processImmediate [as _immediateCallback] (timers.js:383:17)
+[2016-09-11 16:26:11.930] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&limit=10 HTTP/1.1" 200 42 "" "PostmanRuntime/2.4.5"
+[2016-09-11 16:26:56.996] [INFO] [boot] - env: development
+[2016-09-11 16:26:57.918] [INFO] access - ::ffff:127.0.0.1 - - "GET /casino?country=%e4%b8%ad%e5%9b%bd&limit=10 HTTP/1.1" 200 6782 "" "PostmanRuntime/2.4.5"

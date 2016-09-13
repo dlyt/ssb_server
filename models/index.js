@@ -65,25 +65,12 @@ t.User.hasMany(t.UserPoint, {foreignKey: 'user_id'})
 t.User.belongsToMany(t.Casino, {through:t.CasinoVip , foreignKey: 'user_id'})
 t.Casino.belongsToMany(t.User, {through:t.CasinoVip , foreignKey: 'casino_id'})
 
-/* 连接数据库 */
+/* 数据库鉴权 */
 db.authenticate().then(function(err) {
     console.log('Connection has been established successfully.')
-    t.User.findOne().then(function(user){
-
-    })
 }).catch(function (err) {
     console.log('Unable to connect to the database:', err)
 })
-
-
-const init = Promise.coroutine(function* () {
-    for (let key of Object.keys(t)) {
-        yield t[key].sync();
-        console.log(`Table ${key} synced`);
-    }
-})
-
-//init()
 
 module.exports = {
     t: t,

@@ -23,25 +23,21 @@ global.Services = require('./services')
 global.Utility = require('./utility')
 global.Unify = require('./unify')
 
-var moment = require('moment');
-
-console.log(new Date())
-console.log(new Date( moment().add(7, 'days')))
-console.log(0 || 1)
-
 /* app 实例 */
 var app = express()
 
 /* 设置模板引擎 */
 app.set('views', path.join(__dirname, 'views'))
-app.set('view engine', 'ejs')
+app.set('view engine', 'jade')
 app.set('x-powered-by', true)
 
 /* 图标 */
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 
 /* 设置中间件 */
-app.use(logger('dev'))
+var logger = log4js.getLogger("access")
+app.use(log4js.connectLogger(logger))
+//app.use(logger('combined'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: true
@@ -61,31 +57,35 @@ app.use(express.static(path.join(__dirname, 'public')))
 var routes = require('./routes')
 app.use(routes)
 
+/* 404 */
+app.use(function(req, res, next) {
+    const ip = Utility.clientIpV4(req)
+    var err = new Error(`Not Found`)
+    err.status = 404
+    next(err)
+})
+
 /* 错误处理-开发环境 */
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500)
-    res.render('error', {
-      message: err.message,
-      error: err
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500)
+        res.render('error', {
+            message: err.message,
+            error: err
+        })
     })
-  })
 }
 
 /* 错误处理-生产环境 */
 app.use(function(err, req, res, next) {
-  res.status(err.status || 500)
-  res.render('error', {
-    message: err.message,
-    error: {}
-  })
+    res.status(err.status || 500)
+    res.render('error', {
+        message: err.message,
+        error: {}
+    })
 })
 
-/* 404 */
-app.use(function(req, res, next) {
-  var err = new Error('Not Found')
-  err.status = 404
-  next(err)
-})
+var logger = log4js.getLogger('[boot]')
+logger.info(`env: ${app.get('env')}`)
 
 module.exports = app

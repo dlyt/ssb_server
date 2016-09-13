@@ -3,7 +3,7 @@
 		{
 			"name": "backend-01",
 			"script": "bin/www",
-			"watch": true,
+			"watch": false,
 			"env": {
                 "ID": "00",
 				"NODE_ENV": "production",

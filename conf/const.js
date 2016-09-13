@@ -2,6 +2,7 @@
 
 const fs = require('fs')
 
+/* 一些查询限制 */
 let exp = {
     com: {
         casion: {

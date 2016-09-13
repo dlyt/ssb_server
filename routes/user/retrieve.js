@@ -40,7 +40,7 @@ function get_smscode(req, res) {
             var [err, count] = yield cache.hget(`RET_${mobile}`, 'sms_count', $)
             if (err) throw err
 
-            count = parseInt(count || '0')
+            count = Utility.toInt(count)
             if (count >= max) return res.json(Conf.promise('1001'))
 
             const code = Utility.rand4()
@@ -138,7 +138,7 @@ function set_password(req, res) {
 			if (err) throw err
 
             user.password = pwd_transform(password)
-            user.last_update = Date.now()
+            user.last_update = new Date()
             yield user.save()
 
             var [err, jwt] = yield Services.token.encode(user, $)

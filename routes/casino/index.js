@@ -4,8 +4,9 @@ const lightco = require('lightco')
 const async = require('async')
 const request = require('request')
 const express = require('express')
+const webcache = Services.cache.webcache
 const router = express.Router()
-const logger = log4js.getLogger('[routes-com]')
+const logger = log4js.getLogger('[routes-casino]')
 const toInt = Utility.toInt
 
 const { Country,
@@ -19,10 +20,10 @@ const { Country,
         BigMatchSerie,
         DailyMatchSerie } = Models
 
-router.get('/', casinos)
-router.get('/:id', casino)
-router.get('/bigmatch/:id', casino_big_match)
-router.get('/dailymatch/:id', casino_daily_match)
+router.get('/', webcache.get, casinos)
+router.get('/:id', webcache.get, casino)
+router.get('/bigmatch/:id', webcache.get, casino_big_match)
+router.get('/dailymatch/:id', webcache.get, casino_daily_match)
 
 function casinos(req, res) {
     lightco.run(function*($) {
@@ -53,9 +54,12 @@ function casinos(req, res) {
                             }]
                         }]
                     },{
-                        model: Feature, required: true,
+                        model: Feature,
                         attributes: ['feature'],
                         through: {attributes: []}
+                    },{
+                        model: CasinoImage,
+                        attributes: ['url']
                     }
                 ],
                 order: [['last_update', req.query.order || 'DESC']],
@@ -68,7 +72,11 @@ function casinos(req, res) {
             var [err, casinos] = yield Casino.scope('detail').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', casinos))
+            let pack = Conf.promise('0', casinos)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -99,6 +107,9 @@ function casino(req, res) {
                         model: Feature,
                         attributes: ['feature'],
                         through: {attributes: []}
+                    },{
+                        model: CasinoImage,
+                        attributes: ['url']
                     }
                 ]
             }
@@ -106,7 +117,11 @@ function casino(req, res) {
             var [err, casino] = yield Casino.scope('detail').findById(id, opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', casino))
+            let pack = Conf.promise('0', casino)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -144,7 +159,11 @@ function casino_big_match(req, res) {
             var [err, matchs] = yield BigMatchSerie.scope('show', 'intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', matchs))
+            let pack = Conf.promise('0', matchs)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -182,7 +201,11 @@ function casino_daily_match(req, res) {
             var [err, matchs] = yield DailyMatchSerie.scope('show', 'intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', matchs))
+            let pack = Conf.promise('0', matchs)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)

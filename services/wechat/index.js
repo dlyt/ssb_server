@@ -10,16 +10,17 @@ const opts = {
 }
 
 let wechat = {
+	/* 微信认证 */
 	auth: {
 		authorize: auth.authorize
 	},
+	/* 订单 */
     order: {
-		notify: function(body, cb) {
-			request.xmlhandle(body, opts, cb)
-		},
+		/* 接收微信支付成功通知后,对消息的签名进行验证 */
 		verify: function(xml) {
 			return request.verify(xml, opts)
 		},
+		/* 处理微信支付通知后，将结果返回 */
 		response: function(res, error){
 			res.set('Content-Type', 'text/xml')
 			var xml = ''
@@ -30,6 +31,7 @@ let wechat = {
 			}
 			res.send(xml)
 		},
+		/* 下单api */
         unified: function(data, cb) {
             request.xmlssl(url.order.unified, data, opts, function(err, data){
 				if (err)
@@ -64,13 +66,16 @@ let wechat = {
 				cb(null, result)
 			})
         },
+		/* 查询是否付款 */
         query: function(data, cb) {
             request.xmlssl(url.order.query, data, opts, cb)
         },
+		/* 关闭订单 */
         close: function(data, cb) {
             request.xmlssl(url.order.close, data, opts, cb)
         }
     },
+	/* 退款相关 */
     refund: {
         create: function(data, cb) {
             request.xmlssl(url.refund.create, data, opts, cb)

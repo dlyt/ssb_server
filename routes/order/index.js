@@ -5,7 +5,7 @@ const async = require('async')
 const request = require('request')
 const express = require('express')
 const router = express.Router()
-const logger = log4js.getLogger('[order]')
+const logger = log4js.getLogger('[routes-order]')
 const wechat = Services.wechat
 const toInt = Utility.toInt
 
@@ -25,11 +25,7 @@ const { User,
 
 function orders(req, res) {
     lightco.run(function*($) {
-        var transaction
         try {
-            var [err, transaction] = yield sequelize.transaction()
-            if (err) throw err
-
             const user = req.user
             const def = Conf.const.order.limit_def
             const max = Conf.const.order.limit_max
@@ -66,13 +62,10 @@ function orders(req, res) {
             var [err, orders] = yield Order.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            transaction.commit()
-
             res.json(Conf.promise('0', orders))
 
         } catch (e) {
             logger.warn(e)
-            if (transaction) transaction.rollback()
             return res.json(Conf.promise('1'))
         }
     })
@@ -81,25 +74,18 @@ function orders(req, res) {
 
 function order(req, res) {
     lightco.run(function*($) {
-        var transaction
         try {
-            var [err, transaction] = yield sequelize.transaction()
-            if (err) throw err
-
             const user = req.user
             const id = req.params.id
 
             let opts = {
-                where: {user_id: user.user_id},
-                transaction: transaction
+                where: {user_id: user.user_id}
             }
             var [err, order] = yield Order.findById(id, opts)
             if (err) throw err
 
-            if (!order) {
-                transaction.commit()
+            if (!order)
                 return res.json(Conf.promise('2000'))
-            }
 
             if (!order.have_pay) {
                 var [err, update] = yield Unify.order.refresh(order, $)
@@ -107,12 +93,10 @@ function order(req, res) {
                 if (update) order = update
             }
 
-            transaction.commit()
             return res.json(Conf.promise('0', order))
 
         } catch (e) {
             logger.warn(e)
-            if (transaction) transaction.rollback()
             return res.json(Conf.promise('1'))
         }
     })
@@ -120,46 +104,34 @@ function order(req, res) {
 
 function order_pay(req, res) {
     lightco.run(function*($) {
-        var transaction
         try {
-            var [err, transaction] = yield sequelize.transaction()
-            if (err) throw err
-
             const user = req.user
             const id = toInt(req.params.id)
             const type = toInt(req.body.type)
 
             let opts = {
-                where: {user_id: user.user_id},
-                transaction: transaction
+                where: {user_id: user.user_id}
             }
 
             var [err, order] = yield Order.findById(id, opts)
             if (err) throw err
-            if (!order) {
-                transaction.rollback()
+            if (!order)
                 return res.json(Conf.promise('2000'))
-            }
 
-            if (order.have_pay) {
-                transaction.rollback()
+            if (order.have_pay)
                 return res.json(Conf.promise('2001'))
-            }
 
             var [err, canpay] = yield Unify.order.canpay(order, $)
             if (err) throw err
-            if (!canpay) {
-                transaction.rollback()
+            if (!canpay)
                 return res.json(Conf.promise('2002'))
-            }
 
             opts = {
                 where: {
                     order_id: order.order_id,
                     state: 0,
                     pay_type: type
-                },
-                transaction: transaction
+                }
             }
             var [err, payment] = yield Payment.findOne(opts)
             if (err) throw err
@@ -173,11 +145,11 @@ function order_pay(req, res) {
                     state: 0,
                     pay_type: type
                 }
-                opts = {transaction: transaction}
-                var [err, payment] = yield Payment.create(new_payment, opts)
+                var [err, payment] = yield Payment.create(new_payment)
                 if (err) throw err
                 if (!payment) throw new Error(`order:${order.order_id} 创建payment失败`)
             }
+
             const fen = Math.ceil(payment.amount * 100)
             const data = {
                 body: order.desc,
@@ -194,22 +166,17 @@ function order_pay(req, res) {
             }
 
             if (!result) {
-                /* 此 payment 不能继续支付 */
                 payment.state = 2
-                let opts = {transaction: transaction}
-                var [err] = yield payment.save(opts)
+                var [err] = yield payment.save()
                 if (err) throw err
 
-                transaction.commit()
                 return res.json(Conf.promise('1'))
             }
 
-            transaction.commit()
             res.json(Conf.promise('0', result))
 
         } catch (e) {
 			logger.warn(e)
-            if (transaction) transaction.rollback()
 			return res.json(Conf.promise('1'))
         }
     })

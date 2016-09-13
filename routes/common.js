@@ -4,23 +4,17 @@ const lightco = require('lightco')
 const async = require('async')
 const request = require('request')
 const express = require('express')
+const webcache = Services.cache.webcache
 const router = express.Router()
 const logger = log4js.getLogger('[routes-com]')
 
 const { City,
         Country } = Models
 
-router.get('/', function(req, res){
-    res.render('index', {
-        title: 'Express',
-        image: 'http://ssb-oss.oss-cn-hangzhou.aliyuncs.com/casino/logo/paopao-1.png'
-    });
-})
-router.get('/country', countrys)
-router.get('/city', citys)
+router.get('/country', webcache.get, countries)
+router.get('/city', webcache.get, cities)
 
-
-function countrys(req, res) {
+function countries(req, res) {
     lightco.run(function*($) {
         try {
             if (req.query.continent)
@@ -30,10 +24,14 @@ function countrys(req, res) {
                 where : continent || {}
             }
 
-            var [err, countrys] = yield Country.scope('intro').findAll(opts)
+            var [err, countries] = yield Country.scope('intro').findAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', JSON.stringify(countrys)))
+            let pack = Conf.promise('0', countries)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)
@@ -42,7 +40,7 @@ function countrys(req, res) {
     })
 }
 
-function citys(req, res) {
+function cities(req, res) {
     lightco.run(function*($) {
         try {
             if (req.query.country)
@@ -55,10 +53,14 @@ function citys(req, res) {
                 }]
             }
 
-            var [err, citys] = yield City.scope('intro').findAll(opts)
+            var [err, cities] = yield City.scope('intro').findAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', JSON.stringify(citys)))
+            let pack = Conf.promise('0', cities)
+
+            yield webcache.set(req, JSON.stringify(pack), $)
+
+            res.json(pack)
 
         } catch (e) {
             logger.warn(e)

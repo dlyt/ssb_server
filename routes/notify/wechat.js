@@ -3,7 +3,7 @@
 const lightco = require('lightco')
 const express = require('express')
 const router = express.Router()
-const logger = log4js.getLogger('[order]')
+const logger = log4js.getLogger('[routes-notify-wechat]')
 const wechat = Services.wechat
 
 router.post('/', notify)

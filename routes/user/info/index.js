@@ -9,10 +9,10 @@ const fmtId = Utility.fmtId
 const { User } = Models
 
 router.get('/', info)
-router.use('/supplement', require('./supplement'))
-router.use('/bind', require('./bind'))
+router.use('/supplement', require('./supplement'))      /* 用户信息补全 */
+router.use('/bind', require('./bind'))                  /* (手机注册绑定微信) (微信注册绑定手机) */
 
-
+/* 获取用户信息 */
 function info(req, res) {
     lightco.run(function*($) {
         try {

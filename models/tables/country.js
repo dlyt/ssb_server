@@ -32,10 +32,10 @@ module.exports = (db) => {
         timestamps: false,
         scopes: {
             intro: {
-                attributes: ['country_id', 'country', 'continent', 'last_update']
+                attributes: ['country_id', 'country', 'continent']
             },
             detail: {
-                attributes: ['country_id', 'country', 'continent', 'image_url', 'last_update']
+                attributes: ['country_id', 'country', 'continent', 'image_url']
             }
         }
     })
