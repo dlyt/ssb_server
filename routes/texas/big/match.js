@@ -16,6 +16,7 @@ router.get('/setting/:id', webcache.get, match_setting)
 router.post('/join/:id', Services.token.decode, match_join)
 
 const { User,
+        ExchangeRate,
         BigMatch,
         BigMatchSerie,
         Organization,
@@ -59,8 +60,15 @@ function match(req, res) {
     lightco.run(function*($) {
         try {
             const id = toInt(req.params.id)
+            const opts = {
+                include: [{
+                    model: ExchangeRate,
+                    attributes: ['exchangeRate_id', 'currency_name', 'exchange_rate', 'currency_code']
+                }],
+                where: {'bigMatch_id': id}
+            }
 
-            var [err, match] = yield BigMatch.scope('detail').findById(id)
+            var [err, match] = yield BigMatch.scope('detail').findOne(opts)
             if (err) throw err
 
             let pack = Conf.promise('0', match)

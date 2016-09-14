@@ -18,6 +18,7 @@ router.get('/join/:id', webcache.get, serie_match)
 router.get('/map/:id', webcache.get, serie_map)
 
 const { User,
+        ExchangeRate,
         BigMatchSerie,
         BigMatch,
         Organization,
@@ -237,6 +238,10 @@ function serie_match(req, res) {
             const max = Conf.const.big.serie.limit_max
 
             const opts = {
+                include: [{
+                    model: ExchangeRate,
+                    attributes: ['exchangeRate_id', 'currency_name', 'exchange_rate', 'currency_code']
+                }],
                 order: [['last_update', req.query.order || 'DESC']],
                 where : {'bigMatchSerie_id': id},
                 offset: toInt(req.query.offset, 0),
