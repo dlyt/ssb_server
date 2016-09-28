@@ -21,6 +21,7 @@ const { User,
         ExchangeRate,
         BigMatchSerie,
         BigMatch,
+        BigMatchTour,
         Organization,
         Casino,
         Address,
@@ -36,6 +37,10 @@ function series(req, res) {
             const max = Conf.const.big.serie.limit_max
 
             let query = []
+
+            /* 巡回赛查询 */
+            if (req.query.tour)
+                var tour = {bigMatchTour_id: req.query.tour}
 
             /* 按月查询 */
             if (req.query.month) {
@@ -79,11 +84,14 @@ function series(req, res) {
                         }]
                     }]
                 }]
+            },{
+              model: BigMatchTour, attributes: ['name'],
+              where: tour || {}
             }]
 
             let opts = {
                 include: include,
-                order: [['last_update', req.query.order || 'DESC']],
+                order: [['start_date', req.query.order || 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
                 where: {$and: query}
@@ -101,6 +109,7 @@ function series(req, res) {
             res.json(pack)
 
         } catch (e) {
+          console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }

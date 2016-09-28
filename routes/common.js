@@ -9,10 +9,37 @@ const router = express.Router()
 const logger = log4js.getLogger('[routes-com]')
 
 const { City,
-        Country } = Models
+        Country,
+        BigMatchTour } = Models
 
 router.get('/country', webcache.get, countries)
 router.get('/city', webcache.get, cities)
+router.get('/tour', webcache.get, tour)
+
+
+function tour(req, res) {
+    lightco.run(function*($) {
+        try {
+            if (req.query.tourName)
+                var tourName = {name: req.query.tourName}
+
+            const opts = {
+                where : tourName || {}
+            }
+
+            var [err, bigMatchTour] = yield BigMatchTour.findAll(opts)
+            if (err) throw err
+
+            let pack = Conf.promise('0', bigMatchTour)
+
+            res.json(pack)
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
 
 function countries(req, res) {
     lightco.run(function*($) {

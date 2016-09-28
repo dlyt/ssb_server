@@ -27,6 +27,7 @@ t.Casino.belongsToMany(t.Feature, {through:t.CasinoFeature , foreignKey: 'casino
 t.BigMatchTour.hasMany(t.BigMatchSerie, {foreignKey: 'bigMatchTour_id'})
 t.Organization.hasMany(t.BigMatchSerie, {foreignKey: 'organization_id'})
 t.BigMatchSerie.belongsTo(t.Organization, {foreignKey: 'organization_id'})
+t.BigMatchSerie.belongsTo(t.BigMatchTour, {foreignKey: 'bigMatchTour_id'})
 t.Organization.hasMany(t.DailyMatchSerie, {foreignKey: 'organization_id'})
 t.DailyMatchSerie.belongsTo(t.Organization, {foreignKey: 'organization_id'})
 
