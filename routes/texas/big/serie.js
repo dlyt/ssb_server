@@ -38,10 +38,6 @@ function series(req, res) {
 
             let query = []
 
-            /* 巡回赛查询 */
-            if (req.query.tour)
-                var tour = {bigMatchTour_id: req.query.tour}
-
             /* 按月查询 */
             if (req.query.month) {
                 const m = req.query.month
@@ -84,10 +80,16 @@ function series(req, res) {
                         }]
                     }]
                 }]
-            },{
-              model: BigMatchTour, attributes: ['name'],
-              where: tour || {}
             }]
+
+            /* 巡回赛查询 */
+            if (req.query.tour) {
+              var tour = {bigMatchTour_id: req.query.tour}
+              include.push({
+                model: BigMatchTour, attributes: ['name'],
+                where: tour || {}
+              })
+            }
 
             let opts = {
                 include: include,
