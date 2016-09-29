@@ -36,7 +36,7 @@ function matchs(req, res) {
                 var match_day = {match_day: req.query.match_day}
 
             const include = [{
-                model: DailyMatchSerie, attributes: ['organization_id'],
+                model: DailyMatchSerie, attributes: ['dailyMatchSerie_id', 'name', 'organization_id'],
                 include: [{
                     model: Organization, attributes: ['casino_id'],
                     where: casino_id || {}
@@ -46,7 +46,7 @@ function matchs(req, res) {
             const opts = {
                 include: include,
                 where: match_day || {},
-                order: [['last_update', req.query.order || 'DESC']],
+                order: [['start_time', req.query.order || 'ASC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def)
             }
