@@ -29,7 +29,23 @@ function matchs(req, res) {
             const def = Conf.const.daily.match.limit_def
             const max = Conf.const.daily.match.limit_max
 
+            if (req.query.casino_id)
+                var casino_id = {casino_id: req.query.casino_id}
+
+            if (req.query.match_day)
+                var match_day = {match_day: req.query.match_day}
+
+            const include = [{
+                model: DailyMatchSerie, attributes: ['organization_id'],
+                include: [{
+                    model: Organization, attributes: ['casino_id'],
+                    where: casino_id || {}
+                }]
+            }]
+
             const opts = {
+                include: include,
+                where: match_day || {},
                 order: [['last_update', req.query.order || 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def)
