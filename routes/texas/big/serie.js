@@ -34,7 +34,7 @@ function series(req, res) {
             const S = Sequelize
 
             const def = Conf.const.big.serie.limit_def
-            const max = Conf.const.big.serie.limit_max
+            const max = 15
 
             let query = []
 
