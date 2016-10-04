@@ -10,6 +10,7 @@ const checkIdCard = Utility.checkIdCard
 const { User } = Models
 
 router.post('/', supplement)
+router.post('/perfect', perfect)
 
 function supplement(req, res) {
     lightco.run(function*($) {
@@ -82,6 +83,65 @@ function supplement(req, res) {
         } catch (e) {
             logger.warn(e)
             return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function perfect(req, res) {
+    lightco.run(function*($) {
+        try {
+            const user = req.user
+
+            if (req.body.rickName && user.rickName)
+                return res.json(Conf.promise('1026', '无法修改昵称'))
+
+            if (req.body.realName && user.realName)
+                return res.json(Conf.promise('1026', '无法修改真实姓名'))
+
+            if (req.body.idCard && user.idCard)
+                return res.json(Conf.promise('1026', '无法修改身份证号'))
+
+            if (req.body.passportID && user.passportID)
+                return res.json(Conf.promise('1026', '无法修改身份证号'))
+
+            if (req.body.rickName) {
+                var Value = {rickName: req.body.rickName}
+            }
+
+            if (req.body.realName) {
+                var Value = {realName: req.body.realName}
+            }
+
+            if (req.body.idCard) {
+                var Value = {idCard: req.body.idCard}
+            }
+
+            if (req.body.passportID) {
+                var Value = {passportID: req.body.passportID}
+            }
+
+            const opt = {
+                where: {
+                    user_id: user.user_id,
+                },
+            }
+
+            const value = Value
+
+            var [err] = yield User.update(value, opt)
+
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                return res.json(Conf.promise('1027'))
+            }
+
+            if (err) throw err
+
+            return res.json(Conf.promise('0'))
+
+        } catch (e) {
+            //console.log(err);
+            logger.warn(e)
+			      return res.json(Conf.promise('1'))
         }
     })
 }

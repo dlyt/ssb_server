@@ -19,6 +19,7 @@ router.post('/join/:id', Services.token.decode, match_join)
 const { User,
         DailyMatch,
         DailyMatchSerie,
+        DailyMatchResult,
         Organization,
         Order,
         MatchSetting } = Models
@@ -41,6 +42,8 @@ function matchs(req, res) {
                     model: Organization, attributes: ['casino_id'],
                     where: casino_id || {}
                 }]
+            }, {
+                model: DailyMatchResult, attributes: ['name', 'result'],
             }]
 
             const opts = {
@@ -62,6 +65,7 @@ function matchs(req, res) {
             res.json(pack)
 
         } catch (e) {
+            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
