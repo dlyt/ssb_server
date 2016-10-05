@@ -40,8 +40,8 @@ function get_smscode(req, res) {
             var [err, count] = yield cache.hget(`REG_${mobile}`, 'sms_count', $)
             if (err) throw err
 
-            count = Utility.toInt(count)
-            if (count >= max) return res.json(Conf.promise('1001'))
+            // count = Utility.toInt(count)
+            // if (count >= max) return res.json(Conf.promise('1001'))
 
             const code = Utility.rand4()
             const content = template.register(code)
@@ -110,7 +110,7 @@ function set_password(req, res) {
     lightco.run(function*($) {
         const mobile = req.body.mobile
         const _token = req.body.token
-		const password = req.body.password
+		    var password = req.body.password
 
         try {
             if (!mobile || !Utility.checkPhone(mobile))
@@ -139,7 +139,7 @@ function set_password(req, res) {
 
             password = pwd_transform(password)
 
-			var [err, user] = yield User.create({user: mobile, password:password})
+			var [err, user] = yield User.create({user: mobile, password:password, mobile: mobile})
 			if (err) throw err
 
 			var [err, jwt] = yield Services.token.encode(user, $)
@@ -148,6 +148,7 @@ function set_password(req, res) {
 			return res.json(Conf.promise('0', jwt))
 
         } catch (e) {
+          console.log(e);
 			logger.warn(e)
 			return res.json(Conf.promise('1'))
         }
