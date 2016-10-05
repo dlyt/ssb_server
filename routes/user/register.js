@@ -40,8 +40,8 @@ function get_smscode(req, res) {
             var [err, count] = yield cache.hget(`REG_${mobile}`, 'sms_count', $)
             if (err) throw err
 
-            // count = Utility.toInt(count)
-            // if (count >= max) return res.json(Conf.promise('1001'))
+            count = Utility.toInt(count)
+            if (count >= max) return res.json(Conf.promise('1001'))
 
             const code = Utility.rand4()
             const content = template.register(code)
