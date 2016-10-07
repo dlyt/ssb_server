@@ -128,7 +128,7 @@ function perfect(req, res) {
 
             const value = Value
 
-            var [err, user_info] = yield User.findOne(value)
+            var [err, user_info] = yield User.findOne({where: value})
 
             if (user_info) {
                 return res.json(Conf.promise('1027'))
