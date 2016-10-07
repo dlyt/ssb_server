@@ -67,7 +67,7 @@ function series(req, res) {
             const include = [{
                 model: Organization, attributes: ['name'],
                 include: [{
-                    model: Casino, attributes: ['casino'],
+                    model: Casino, attributes: ['casino', 'contact_phone', 'web_url'],
                     include: [{
                         model: Address, attributes: ['address'],
                         include: [{
@@ -111,7 +111,6 @@ function series(req, res) {
             res.json(pack)
 
         } catch (e) {
-          console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
