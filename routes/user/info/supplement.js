@@ -128,18 +128,19 @@ function perfect(req, res) {
 
             const value = Value
 
-            var [err] = yield User.update(value, opt)
+            var [err, user_info] = yield User.findOne(value)
 
-            if (err.name === 'SequelizeUniqueConstraintError') {
+            if (user_info) {
                 return res.json(Conf.promise('1027'))
             }
+
+            var [err] = yield User.update(value, opt)
 
             if (err) throw err
 
             return res.json(Conf.promise('0'))
 
         } catch (e) {
-            //console.log(err);
             logger.warn(e)
 			      return res.json(Conf.promise('1'))
         }
