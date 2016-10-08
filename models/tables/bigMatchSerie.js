@@ -57,6 +57,9 @@ module.exports = (db) => {
             type: Sequelize.INTEGER,
             allowNull: false
         },
+    remark: {
+            type: Sequelize.STRING(50)
+        },
         last_update: {
 			type: Sequelize.DATE,
 			defaultValue: Sequelize.NOW
