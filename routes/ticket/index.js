@@ -26,6 +26,13 @@ function tickets(req, res) {
             const def = Conf.const.ticket.limit_def
             const max = Conf.const.ticket.limit_max
 
+            let query = [{user_id: user.user_id}]
+
+            if (req.query.used)
+                  var used = toInt(req.query.used)
+
+            query.push({have_used: req.query.used})
+
             let opts = {
                 where: {name: 'ticket_show_expire'}
             }
@@ -40,14 +47,11 @@ function tickets(req, res) {
             /* 小于此时间的不显示 */
             const timeline = new Date(moment().subtract(show_day, 'days'))
 
+            if (used === 1)
+                  query.push({used_time: {$gt: timeline}})
+
             opts = {
-                where: {
-                    $or:[
-                        {have_used: false},
-                        {have_used: true, used_time: {$gt: timeline}}
-                    ],
-                    user_id: user.user_id,
-                },
+                where: {$and: query},
                 order: [['used_time', 'DESC'], ['create_time', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def)
