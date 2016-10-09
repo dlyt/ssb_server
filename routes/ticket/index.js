@@ -45,9 +45,9 @@ function tickets(req, res) {
                     $or:[
                         {have_used: false},
                         {have_used: true, used_time: {$gt: timeline}}
-                    ]
+                    ],
+                    user_id: user.user_id,
                 },
-                user_id: user.user_id,
                 order: [['used_time', 'DESC'], ['create_time', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def)
