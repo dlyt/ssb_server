@@ -17,7 +17,13 @@ const { User,
         OrderDetail,
         SerialNumber,
         GlobalSetting,
-        UserPoint } = Models
+        UserPoint,
+        DailyMatch,
+        DailyMatchSerie,
+        BigMatch,
+        BigMatchSerie,
+        Casino,
+        Organization } = Models
 
 function tickets(req, res) {
     lightco.run(function*($) {
@@ -50,7 +56,15 @@ function tickets(req, res) {
             if (used === 1)
                   query.push({used_time: {$gt: timeline}})
 
+            const include = [{
+                    model: OrderDetail, attributes: ['orderDetail_id'],
+                    include: [{
+                        model: Order, attributes: ['bigMatch_id', 'dailyMatch_id'],
+                    }]
+            }]
+
             opts = {
+                include: include,
                 where: {$and: query},
                 order: [['used_time', 'DESC'], ['create_time', 'DESC']],
                 offset: toInt(req.query.offset, 0),
@@ -61,6 +75,51 @@ function tickets(req, res) {
 
             var [err, tickets] = yield SerialNumber.scope('intro').findAndCountAll(opts)
             if (err) throw err
+
+            var data = tickets.rows
+
+            for (var i = 0 , length = data.length; i < length; i++) {
+                  var bigMatch_id = data[i].orderDetail.order.bigMatch_id
+                  var dailyMatch_id = data[i].orderDetail.order.dailyMatch_id
+                  if (bigMatch_id == null) {
+                        const opt = {
+                            include: [{
+                                model: DailyMatchSerie,
+                                include: [{
+                                    model: Organization,
+                                    include: [{
+                                        model: Casino,
+                                    }]
+                                }]
+                            }],
+                            where: {'dailyMatch_id': dailyMatch_id}
+                        }
+
+                        var [err, casinoName] = yield DailyMatch.find(opt)
+                        if (err) throw err
+
+                        data[i].dataValues.casinoName = casinoName.dailyMatchSerie.organization.casino.casino
+                        data[i].dataValues.matchName = casinoName.dailyMatchSerie.name
+                  } else {
+                        const opt = {
+                            include: [{
+                                model: BigMatchSerie,
+                                include: [{
+                                    model: Organization,
+                                    include: [{
+                                        model: Casino,
+                                    }]
+                                }]
+                            }],
+                            where: {'bigMatch_id': bigMatch_id}
+                        }
+                        var [err, casinoName] = yield BigMatch.find(opt)
+                        if (err) throw err
+
+                        data[i].dataValues.casinoName = casinoName.bigMatchSerie.organization.casino.casino
+                        data[i].dataValues.matchName = casinoName.bigMatchSerie.name
+                  }
+            }
 
             res.json(Conf.promise('0', tickets))
 
