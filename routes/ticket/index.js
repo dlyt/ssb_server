@@ -76,6 +76,16 @@ function tickets(req, res) {
             var [err, tickets] = yield SerialNumber.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
+            if (tickets.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', casinos)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
             var data = tickets.rows
 
             for (var i = 0 , length = data.length; i < length; i++) {
@@ -142,7 +152,15 @@ function ticket(req, res) {
             var [err, ticket] = yield SerialNumber.scope('detail').findById(id, opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', ticket))
+            if (ticket === null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', ticket)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
 
         } catch (e) {
 			logger.warn(e)
