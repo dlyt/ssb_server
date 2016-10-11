@@ -72,11 +72,17 @@ function casinos(req, res) {
             var [err, casinos] = yield Casino.scope('detail').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', casinos)
+            if (casinos.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', casinos)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -117,11 +123,15 @@ function casino(req, res) {
             var [err, casino] = yield Casino.scope('detail').findById(id, opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', casino)
+            if (casinos.value == null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', casino)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
             logger.warn(e)
@@ -159,11 +169,16 @@ function casino_big_match(req, res) {
             var [err, matchs] = yield BigMatchSerie.scope('show', 'intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', matchs)
+            if (matchs.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', matchs)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
 
         } catch (e) {
             logger.warn(e)
@@ -201,11 +216,17 @@ function casino_daily_match(req, res) {
             var [err, matchs] = yield DailyMatchSerie.scope('show', 'intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', matchs)
+            if (matchs.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', matchs)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)

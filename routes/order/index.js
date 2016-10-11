@@ -38,7 +38,7 @@ function orders(req, res) {
                 order: [['last_update', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
-                transaction: transaction,
+                //transaction: transaction,
                 include: [{
                     model: Match,
                     attributes: ['match_day'],
@@ -62,9 +62,16 @@ function orders(req, res) {
             var [err, orders] = yield Order.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            res.json(Conf.promise('0', orders))
+            if (orders.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  res.json(Conf.promise('0', orders))
+            }
+
+
 
         } catch (e) {
+            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
@@ -86,7 +93,7 @@ function order(req, res) {
 
             if (!order)
                 return res.json(Conf.promise('2000'))
-    
+
             if (!order.have_pay) {
                 var [err, update] = yield Unify.order.refresh(order, $)
                 if (err) throw err

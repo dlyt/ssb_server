@@ -104,11 +104,17 @@ function series(req, res) {
             var [err, series] = yield BigMatchSerie.scope('show', 'detail').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', series)
+            if (series.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', series)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -160,11 +166,17 @@ function hot(req, res) {
             var [err, series] = yield BigMatchSerie.scope('show', 'detail').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', series)
+            if (series.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', series)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -182,11 +194,15 @@ function serie(req, res) {
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findById(id)
             if (err) throw err
 
-            let pack = Conf.promise('0', serie)
+            if (serie === null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', serie)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
             logger.warn(e)
@@ -226,11 +242,17 @@ function serie_detail(req, res) {
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findById(id, opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', serie)
+            if (serie === null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', serie)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -263,11 +285,15 @@ function serie_match(req, res) {
             var [err, matchs] = yield BigMatch.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', matchs)
+            if (matchs.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', matchs)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
             logger.warn(e)
@@ -309,11 +335,16 @@ function serie_map(req, res) {
             var [err, matchs] = yield BigMatch.findAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', filter(matchs))
+            console.log(matchs);
+            if (matchs.length === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', filter(matchs))
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
             logger.warn(e)

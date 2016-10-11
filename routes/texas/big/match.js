@@ -43,11 +43,15 @@ function matchs(req, res) {
             var [err, matchs] = yield BigMatch.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', matchs)
+            if (matchs.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', matchs)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
             logger.warn(e)
@@ -71,13 +75,18 @@ function match(req, res) {
             var [err, match] = yield BigMatch.scope('detail').findOne(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', match)
+            if (match === null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', match)
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+                  yield webcache.set(req, JSON.stringify(pack), $)
 
-            res.json(pack)
+                  res.json(pack)
+            }
 
         } catch (e) {
+          console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }

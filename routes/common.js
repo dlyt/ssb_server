@@ -17,30 +17,6 @@ router.get('/city', webcache.get, cities)
 router.get('/tour', webcache.get, tour)
 
 
-function tour(req, res) {
-    lightco.run(function*($) {
-        try {
-            if (req.query.tourName)
-                var tourName = {name: req.query.tourName}
-
-            const opts = {
-                where : tourName || {}
-            }
-
-            var [err, bigMatchTour] = yield BigMatchTour.findAll(opts)
-            if (err) throw err
-
-            let pack = Conf.promise('0', bigMatchTour)
-
-            res.json(pack)
-
-        } catch (e) {
-            logger.warn(e)
-            return res.json(Conf.promise('1'))
-        }
-    })
-}
-
 function countries(req, res) {
     lightco.run(function*($) {
         try {
@@ -51,14 +27,21 @@ function countries(req, res) {
                 where : continent || {}
             }
 
-            var [err, countries] = yield Country.scope('intro').findAll(opts)
+            var [err, countries] = yield Country.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', countries)
+            if (countries.count === 0) {
+                  return res.json(Conf.promise('3'))
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+            } else {
+                  let pack = Conf.promise('0', countries)
 
-            res.json(pack)
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -80,14 +63,21 @@ function cities(req, res) {
                 }]
             }
 
-            var [err, cities] = yield City.scope('intro').findAll(opts)
+            var [err, cities] = yield City.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            let pack = Conf.promise('0', cities)
+            if (cities.count === 0) {
+                  return res.json(Conf.promise('3'))
 
-            yield webcache.set(req, JSON.stringify(pack), $)
+            } else {
+                  let pack = Conf.promise('0', cities)
 
-            res.json(pack)
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+
 
         } catch (e) {
             logger.warn(e)
@@ -96,6 +86,35 @@ function cities(req, res) {
     })
 }
 
+function tour(req, res) {
+    lightco.run(function*($) {
+        try {
+            if (req.query.tourName)
+                var tourName = {name: req.query.tourName}
 
+            const opts = {
+                where : tourName || {}
+            }
+
+            var [err, bigMatchTour] = yield BigMatchTour.findAndCountAll(opts)
+            if (err) throw err
+
+            if (bigMatchTour.count === 0) {
+                  return res.json(Conf.promise('3'))
+
+            } else {
+                  let pack = Conf.promise('0', bigMatchTour)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
 
 module.exports = router
