@@ -93,7 +93,7 @@ function series(req, res) {
 
             let opts = {
                 include: include,
-                order: [['start_date', req.query.order || 'DESC']],
+                order: [['start_date', req.query.order || 'ASC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
                 where: {$and: query}
