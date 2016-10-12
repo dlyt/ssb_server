@@ -335,7 +335,6 @@ function serie_map(req, res) {
             var [err, matchs] = yield BigMatch.findAll(opts)
             if (err) throw err
 
-            console.log(matchs);
             if (matchs.length === 0) {
                   return res.json(Conf.promise('3'))
             } else {
