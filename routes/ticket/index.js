@@ -142,25 +142,23 @@ function ticket(req, res) {
             const user = req.user
             const id = req.params.id
             const opts = {
-                where: {'user_id': user.user_id}
+                where: {
+                  'user_id': user.user_id,
+                  'serialNumber_id': id}
             }
 
-            var [err, ticket] = yield SerialNumber.scope('detail').findById(id, opts)
+            var [err, ticket] = yield SerialNumber.scope('detail').find(opts)
             if (err) throw err
 
             if (ticket === null) {
                   return res.json(Conf.promise('3'))
             } else {
-                  let pack = Conf.promise('0', ticket)
-
-                  yield webcache.set(req, JSON.stringify(pack), $)
-
-                  res.json(pack)
+                  res.json(Conf.promise('0', ticket))
             }
 
         } catch (e) {
-			logger.warn(e)
-			return res.json(Conf.promise('1'))
+      			logger.warn(e)
+      			return res.json(Conf.promise('1'))
         }
     })
 }
