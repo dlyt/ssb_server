@@ -24,7 +24,10 @@ function info(req, res) {
                 mobile: fmtId(user.mobile, 3, 4),
                 idCard: fmtId(user.idCard, 3, 4),
                 passportID: fmtId(user.passportID, 3, 4),
-                oneWayPermit: fmtId(user.oneWayPermit, 3, 4)
+                oneWayPermit: fmtId(user.oneWayPermit, 3, 4),
+                wechat_unionid: user.wechat_unionid,
+                userPoint: user.userPoint,
+                user_spell: user.user_spell,
             }
 
             return res.json(Conf.promise('0', result))
