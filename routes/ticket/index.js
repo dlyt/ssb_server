@@ -56,6 +56,7 @@ function tickets(req, res) {
             if (used === 1)
                   query.push({used_time: {$gt: timeline}})
 
+
             const include = [{
                     model: OrderDetail, attributes: ['orderDetail_id'],
                     include: [{
@@ -76,21 +77,16 @@ function tickets(req, res) {
             var [err, tickets] = yield SerialNumber.scope('intro').findAndCountAll(opts)
             if (err) throw err
 
-            if (tickets.count === 0) {
+            if (tickets.count === 0)
                   return res.json(Conf.promise('3'))
-            } else {
-                  let pack = Conf.promise('0', casinos)
 
-                  yield webcache.set(req, JSON.stringify(pack), $)
-
-                  res.json(pack)
-            }
 
             var data = tickets.rows
 
             for (var i = 0 , length = data.length; i < length; i++) {
                   var bigMatch_id = data[i].orderDetail.order.bigMatch_id
                   var dailyMatch_id = data[i].orderDetail.order.dailyMatch_id
+
                   if (bigMatch_id == null) {
                         const opt = {
                             include: [{

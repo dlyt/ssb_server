@@ -33,45 +33,73 @@ function orders(req, res) {
             const Match = order.bigMatch_id ? BigMatch : DailyMatch
             const Serie = order.bigMatch_id ? BigMatchSerie : DailyMatchSerie
 
+            if (req.query.havePay)
+                  var havePay = req.query.havePay
+
             const opts = {
-                where: {user_id: user.user_id},
+                where: {user_id: user.user_id, have_pay: havePay},
                 order: [['last_update', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
-                //transaction: transaction,
-                include: [{
-                    model: Match,
-                    attributes: ['match_day'],
-                    include: [{
-                        model: Serie,
-                        attributes: ['name'],
-                        include: [{
-                            model: Organization,
-                            attributes: ['name'],
-                            include: [{
-                                model: Casino,
-                                attributes:['casino', 'logo_url']
-                            }]
-                        }]
-                    }]
-                }]
             }
 
             opts.limit = opts.limit > max ? max : opts.limit
 
-            var [err, orders] = yield Order.scope('intro').findAndCountAll(opts)
+            var [err, orders] = yield Order.findAndCountAll(opts)
             if (err) throw err
 
-            if (orders.count === 0) {
+            if (orders.count === 0)
                   return res.json(Conf.promise('3'))
-            } else {
-                  res.json(Conf.promise('0', orders))
+
+            var data = orders.rows
+
+            for (var i = 0 , length = data.length; i < length; i++) {
+                  var bigMatch_id = data[i].bigMatch_id
+                  var dailyMatch_id = data[i].dailyMatch_id
+
+                  if (bigMatch_id == null) {
+                        const opt = {
+                            include: [{
+                                model: DailyMatchSerie,
+                                include: [{
+                                    model: Organization,
+                                    include: [{
+                                        model: Casino,
+                                    }]
+                                }]
+                            }],
+                            where: {'dailyMatch_id': dailyMatch_id}
+                        }
+
+                        var [err, casinoName] = yield DailyMatch.find(opt)
+                        if (err) throw err
+
+                        data[i].dataValues.casinoName = casinoName.dailyMatchSerie.organization.casino.casino
+                        data[i].dataValues.matchName = casinoName.dailyMatchSerie.name
+                  } else {
+                        const opt = {
+                            include: [{
+                                model: BigMatchSerie,
+                                include: [{
+                                    model: Organization,
+                                    include: [{
+                                        model: Casino,
+                                    }]
+                                }]
+                            }],
+                            where: {'bigMatch_id': bigMatch_id}
+                        }
+                        var [err, casinoName] = yield BigMatch.find(opt)
+                        if (err) throw err
+
+                        data[i].dataValues.casinoName = casinoName.bigMatchSerie.organization.casino.casino
+                        data[i].dataValues.matchName = casinoName.bigMatchSerie.name
+                  }
             }
 
-
+            res.json(Conf.promise('0', orders))
 
         } catch (e) {
-            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
@@ -86,9 +114,13 @@ function order(req, res) {
             const id = req.params.id
 
             let opts = {
-                where: {user_id: user.user_id}
+                where: {
+                    user_id: user.user_id,
+                    order_id: id,
+                }
             }
-            var [err, order] = yield Order.findById(id, opts)
+
+            var [err, order] = yield Order.find(opts)
             if (err) throw err
 
             if (!order)
