@@ -17,7 +17,7 @@ function bind(req, res) {
         try {
             const user = req.user
             const code = req.body.code
-
+            console.log(req.body);
             if (user.wechat_unionid)
                 return res.json(Conf.promise('1023'))
 
