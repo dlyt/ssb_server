@@ -13,7 +13,6 @@ const webcache = Services.cache.webcache
 router.get('/', webcache.get, matchs)
 router.get('/:id', webcache.get, match)
 router.get('/result/:id', webcache.get, match_result)
-router.get('/setting/:id', webcache.get, match_setting)
 router.post('/join/:id', Services.token.decode, match_join)
 
 const { User,
@@ -134,36 +133,6 @@ function match_result(req, res) {
     })
 }
 
-function match_setting(req, res) {
-    lightco.run(function*($) {
-        try {
-            const id = toInt(req.params.id)
-
-            var [err, match] = yield DailyMatch.findById(id)
-            if (err) throw err
-            if (!match)
-                return res.json(Conf.promise('3002'))
-
-            var [err, setting] = yield MatchSetting.findById(match.matchSetting_id)
-            if (err) throw err
-
-            if (setting === null) {
-                  return res.json(Conf.promise('3'))
-            } else {
-                  let pack = Conf.promise('0', setting)
-
-                  yield webcache.set(req, JSON.stringify(pack), $)
-
-                  res.json(pack)
-            }
-
-        } catch (e) {
-            logger.warn(e)
-            if (transaction) transaction.rollback()
-            return res.json(Conf.promise('1'))
-        }
-    })
-}
 
 function match_join(req, res) {
     lightco.run(function*($) {

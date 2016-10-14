@@ -10,11 +10,14 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true
         },
+        matchSetting_id: {
+            type: Sequelize.INTEGER,
+        },
         name: {
             type: Sequelize.STRING(50),
             allowNull: false
         },
-		real_buyin: {
+		    real_buyin: {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false
         },

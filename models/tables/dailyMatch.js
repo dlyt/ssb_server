@@ -10,6 +10,9 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true
         },
+        matchSetting_id: {
+            type: Sequelize.INTEGER,
+        },
         match_day: {
             type: Sequelize.DATE,
             allowNull: false
