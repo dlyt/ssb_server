@@ -14,55 +14,59 @@ module.exports = (db) => {
             type: Sequelize.STRING(50),
             allowNull: false
         },
-		type: {
+    		type: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-		is_tour: {
+    		is_tour: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },
-		tour_image: {
+    		tour_image: {
             type: Sequelize.STRING(50)
         },
-		image_url: {
+    		image_url: {
             type: Sequelize.STRING(255)
         },
-		intro_image_url: {
+    		intro_image_url: {
             type: Sequelize.STRING(255)
         },
-		intro_title: {
+    		intro_title: {
             type: Sequelize.STRING(50)
         },
-		intro_content: {
+    		intro_content: {
             type: Sequelize.TEXT
         },
-		hot_level: {
+    		hot_level: {
             type: Sequelize.INTEGER,
-			allowNull: false
+			      allowNull: false
         },
-		need_show: {
+    		need_show: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },
-		start_date: {
+    		start_date: {
             type: Sequelize.DATEONLY,
             allowNull: false
         },
-		end_date: {
+    		end_date: {
             type: Sequelize.DATEONLY,
             allowNull: false
         },
-		cooperated: {
+    		cooperated: {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-    remark: {
+        is_hot: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: 0
+        },
+        remark: {
             type: Sequelize.STRING(50)
         },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'bigMatchSerie',

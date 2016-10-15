@@ -157,7 +157,7 @@ function hot(req, res) {
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
                 where: {
-                    cooperated: 1,
+                    is_hot: 1,
                     end_date: {$gte: new Date()}
                 }
             }
@@ -243,7 +243,6 @@ function today(req, res) {
 
 
         } catch (e) {
-            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
