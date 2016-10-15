@@ -11,6 +11,7 @@ const webcache = Services.cache.webcache
 
 router.get('/', webcache.get, series)
 router.get('/hot', webcache.get, hot)
+router.get('/today', webcache.get, today)
 router.get('/:id', webcache.get, serie)
 router.get('/detail/:id', webcache.get, serie_detail)
 router.get('/match/:id', webcache.get, serie_match)
@@ -179,6 +180,70 @@ function hot(req, res) {
 
 
         } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function today(req, res) {
+    lightco.run(function*($) {
+        try {
+            const S = Sequelize
+
+            const def = Conf.const.big.serie.limit_def
+            const max = 15
+
+            /* 按天查询 */
+            if (req.query.day) {
+                const day = req.query.day
+                var matchDay = {match_day: day}
+            }
+
+
+            /* 俱乐部 */
+            if (req.query.casinoId)
+                var casinoId = {casino_id: req.query.casinoId}
+
+            const include = [{
+                model: BigMatchSerie, attributes: [],
+                include: [{
+                    model: Organization, attributes: [],
+                    include: [{
+                        model: Casino, attributes: [],
+                        where: casinoId || {},
+                    }]
+                }]
+            },{
+                model: ExchangeRate,
+            }]
+
+            let opts = {
+                include: include,
+                order: [['open_time', req.query.order || 'ASC']],
+                offset: toInt(req.query.offset, 0),
+                limit: toInt(req.query.limit, def),
+                where: matchDay || {},
+            }
+
+            opts.limit = opts.limit > max ? max : opts.limit
+
+            var [err, bigmatch] = yield BigMatch.findAndCountAll(opts)
+            if (err) throw err
+
+            if (bigmatch.count === 0) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', bigmatch)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+
+        } catch (e) {
+            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
