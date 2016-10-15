@@ -159,6 +159,7 @@ function match_join(req, res) {
                     [S.fn('DATE_FORMAT',S.col('match_day'),'%Y-%m-%d'), 'day'],
                     [S.fn('TIME_FORMAT',S.col('start_time'),'%H:%i:%s'), 'open'],
                     [S.fn('TIME_FORMAT',S.col('close_reg_time'),'%H:%i:%s'), 'close'],
+                    'state',
                     'dailyMatch_id',
                     'unit_price'
                 ],
@@ -174,8 +175,12 @@ function match_join(req, res) {
 
             var [err, match] = yield DailyMatch.findById(id, opts)
             if (err) throw err
+
             if (!match)
                 return res.json(Conf.promise('3002'))
+
+            if (match.state != 1)
+                return res.json(Conf.promise('3011'))
 
             /* 商家信息 */
             const serie = match.dailyMatchSerie

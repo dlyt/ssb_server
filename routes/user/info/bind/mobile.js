@@ -31,7 +31,7 @@ function get_smscode(req, res) {
             if (user.user) {
                 const ret = fmtId(user.user, 3, 4)
                 return res.json(Conf.promise('1022', ret))
-			}
+			      }
 
             var [err, _user] = yield User.findOne({where: {'user': mobile}})
             if (err) throw err

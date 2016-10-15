@@ -147,6 +147,7 @@ function match_join(req, res) {
                     [S.fn('DATE_FORMAT',S.col('match_day'),'%Y-%m-%d'), 'day'],
                     [S.fn('TIME_FORMAT',S.col('open_time'),'%H:%i:%s'), 'open'],
                     [S.fn('TIME_FORMAT',S.col('close_reg_time'),'%H:%i:%s'), 'close'],
+                    'state',
                     'bigMatch_id',
                     'unit_price'
                 ],
@@ -162,8 +163,12 @@ function match_join(req, res) {
 
             var [err, match] = yield BigMatch.findById(id, opts)
             if (err) throw err
+
             if (!match)
                 return res.json(Conf.promise('3002'))
+            console.log(match.state);
+            if (match.state != 1)
+                return res.json(Conf.promise('3011'))
 
             /* 商家信息 */
             const serie = match.bigMatchSerie
