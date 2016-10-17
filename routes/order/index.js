@@ -38,7 +38,7 @@ function orders(req, res) {
 
             const opts = {
                 where: {user_id: user.user_id, have_pay: havePay},
-                order: [['last_update', 'DESC']],
+                order: [['create_time', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
             }

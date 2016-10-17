@@ -40,9 +40,13 @@ module.exports = (db) => {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false
         },
+        create_time: {
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
+        },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'order',
