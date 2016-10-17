@@ -33,11 +33,13 @@ function orders(req, res) {
             const Match = order.bigMatch_id ? BigMatch : DailyMatch
             const Serie = order.bigMatch_id ? BigMatchSerie : DailyMatchSerie
 
+            let query = [{user_id: user.user_id}]
+
             if (req.query.havePay)
-                  var havePay = req.query.havePay
+                query.push({have_pay: req.query.havePay})
 
             const opts = {
-                where: {user_id: user.user_id, have_pay: havePay},
+                where: {$and: query},
                 order: [['create_time', 'DESC']],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),

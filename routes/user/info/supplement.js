@@ -96,44 +96,44 @@ function perfect(req, res) {
             const idCard = req.body.idCard
             const passportID = req.body.passportID
 
-            if (req.body.realName) {
+            if (realName) {
                   if (user.realName)
                       return res.json(Conf.promise('1012'))
 
                   if (Utility.checkName(realName) === false)
                       return res.json(Conf.promise('1017'))
 
-                  var Value = {realName: req.body.realName}
+                  var Value = {realName: realName}
             }
 
-            if (req.body.idCard) {
+            if (idCard) {
                   if (user.idCard)
                       return res.json(Conf.promise('1013'))
 
                   if (Utility.checkIdCard(idCard) === false)
                       return res.json(Conf.promise('1014'))
 
-                  var Value = {idCard: req.body.idCard}
+                  var Value = {idCard: idCard}
             }
 
-            if (req.body.passportID) {
+            if (passportID) {
                   if (user.passportID)
                       return res.json(Conf.promise('1016'))
 
                   if (Utility.checkPassportID(passportID) === false)
                       return res.json(Conf.promise('1018'))
 
-                  var Value = {passportID: req.body.passportID}
+                  var Value = {passportID: passportID}
             }
 
-            if (req.body.rickName) {
+            if (rickName) {
                   if (user.rickName)
                       return res.json(Conf.promise('1026'))
 
                   if (Utility.checkName(rickName) === false)
                       return res.json(Conf.promise('1028'))
 
-                  var Value = {rickName: req.body.rickName}
+                  var Value = {rickName: rickName}
             }
 
             const opt = {
@@ -144,9 +144,9 @@ function perfect(req, res) {
 
             var [err, user_info] = yield User.findOne({where: value})
 
-            if (user_info) {
+            if (user_info)
                 return res.json(Conf.promise('1027'))
-            }
+            
 
             var [err] = yield User.update(value, opt)
 
