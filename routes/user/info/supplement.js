@@ -91,39 +91,53 @@ function perfect(req, res) {
     lightco.run(function*($) {
         try {
             const user = req.user
-
-            if (req.body.rickName && user.rickName)
-                return res.json(Conf.promise('1026', '无法修改昵称'))
-
-            if (req.body.realName && user.realName)
-                return res.json(Conf.promise('1026', '无法修改真实姓名'))
-
-            if (req.body.idCard && user.idCard)
-                return res.json(Conf.promise('1026', '无法修改身份证号'))
-
-            if (req.body.passportID && user.passportID)
-                return res.json(Conf.promise('1026', '无法修改身份证号'))
-
-            if (req.body.rickName) {
-                var Value = {rickName: req.body.rickName}
-            }
+            const rickName = req.body.rickName
+            const realName = req.body.realName
+            const idCard = req.body.idCard
+            const passportID = req.body.passportID
 
             if (req.body.realName) {
-                var Value = {realName: req.body.realName}
+                  if (user.realName)
+                      return res.json(Conf.promise('1012'))
+
+                  if (Utility.checkName(realName) === false)
+                      return res.json(Conf.promise('1017'))
+
+                  var Value = {realName: req.body.realName}
             }
 
             if (req.body.idCard) {
-                var Value = {idCard: req.body.idCard}
+                  if (user.idCard)
+                      return res.json(Conf.promise('1013'))
+
+                  if (Utility.checkIdCard(idCard) === false)
+                      return res.json(Conf.promise('1014'))
+
+                  var Value = {idCard: req.body.idCard}
             }
 
             if (req.body.passportID) {
-                var Value = {passportID: req.body.passportID}
+                  if (user.passportID)
+                      return res.json(Conf.promise('1016'))
+
+                  if (Utility.checkPassportID(passportID) === false)
+                      return res.json(Conf.promise('1018'))
+
+                  var Value = {passportID: req.body.passportID}
+            }
+
+            if (req.body.rickName) {
+                  if (user.rickName)
+                      return res.json(Conf.promise('1026'))
+
+                  if (Utility.checkName(rickName) === false)
+                      return res.json(Conf.promise('1028'))
+
+                  var Value = {rickName: req.body.rickName}
             }
 
             const opt = {
-                where: {
-                    user_id: user.user_id,
-                },
+                where: {user_id: user.user_id},
             }
 
             const value = Value
