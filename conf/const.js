@@ -17,7 +17,7 @@ let exp = {
         },
         serie: {
 			limit_def: 5,
-			limit_max: 10
+			limit_max: 15
 		},
         match: {
             limit_def: 5,
