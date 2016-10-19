@@ -195,15 +195,15 @@ function today(req, res) {
             const max = 15
 
             /* 按天查询 */
-            if (req.query.day) {
-                const day = req.query.day
-                var matchDay = {match_day: day}
+            if (req.query.match_day) {
+                const match_day = req.query.match_day
+                var matchDay = {match_day: match_day}
             }
 
 
             /* 俱乐部 */
-            if (req.query.casinoId)
-                var casinoId = {casino_id: req.query.casinoId}
+            if (req.query.casino_id)
+                var casinoId = {casino_id: req.query.casino_id}
 
             const include = [{
                 model: BigMatchSerie, attributes: [],
