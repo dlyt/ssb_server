@@ -37,7 +37,7 @@ let wechat = {
 		}
 	},
     /* 微信支付成功回调 指向后端服务器 */
-	reply: 'http://121.43.61.192/notify/wechat'
+	reply: 'http://121.40.158.73/notify/wechat'
 }
 
 module.exports = wechat
