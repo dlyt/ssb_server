@@ -161,7 +161,7 @@ function match_join(req, res) {
                     attributes: ['name'],
                     include: [{
                         model: Organization,
-                        attributes: ['name']
+                        attributes: ['organization_id', 'name']
                     }]
                 }]
             }
@@ -171,7 +171,7 @@ function match_join(req, res) {
 
             if (!match)
                 return res.json(Conf.promise('3002'))
-            console.log(match.state);
+
             if (match.state != 1)
                 return res.json(Conf.promise('3011'))
 
@@ -211,11 +211,13 @@ function match_join(req, res) {
 
             const new_order = {
                 user_id : user.user_id,
+                organization_id: organization.dataValues.organization_id,
                 bigMatch_id: match.bigMatch_id,
                 order_No: Utility.orderId(),
                 desc: desc,
                 quantity: amount,
                 have_pay: false,
+                have_clearing: false,
                 amount: total
             }
 

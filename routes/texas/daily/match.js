@@ -218,11 +218,13 @@ function match_join(req, res) {
 
             const new_order = {
                 user_id : user.user_id,
+                organization_id: organization.dataValues.organization_id,
                 dailyMatch_id: match.dailyMatch_id,
                 order_No: Utility.orderId(),
                 desc: desc,
                 quantity: amount,
                 have_pay: false,
+                have_clearing: false,
                 amount: total
             }
 
