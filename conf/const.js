@@ -45,6 +45,10 @@ let exp = {
     ticket: {
         limit_def: 5,
         limit_max: 10
+    },
+    business: {
+        limit_def: 8,
+        limit_max: 15
     }
 }
 

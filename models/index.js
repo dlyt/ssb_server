@@ -66,6 +66,9 @@ t.User.hasMany(t.UserPoint, {foreignKey: 'user_id'})
 t.User.belongsToMany(t.Casino, {through:t.CasinoVip , foreignKey: 'user_id'})
 t.Casino.belongsToMany(t.User, {through:t.CasinoVip , foreignKey: 'casino_id'})
 
+t.Order.belongsTo(t.User, {foreignKey: 'user_id'})
+t.Business.belongsTo(t.Organization, {foreignKey: 'organization_id'})
+
 /* 数据库鉴权 */
 db.authenticate().then(function(err) {
     console.log('Connection has been established successfully.')

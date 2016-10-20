@@ -10,6 +10,9 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true
         },
+        organization_id: {
+            type: Sequelize.INTEGER,
+        },
         order_No: {
             type: Sequelize.STRING(50),
             allowNull: false
@@ -23,6 +26,10 @@ module.exports = (db) => {
             allowNull: false
         },
         have_pay: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        have_clearing: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },

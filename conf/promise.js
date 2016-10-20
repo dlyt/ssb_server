@@ -58,6 +58,8 @@ const promise = {
 	4003: '该序列号已过有效期',
 	4004: '该序列号已被禁用',
 
+	5001: '门票号不存在',
+	5002: '该门票号不属于本俱乐部',
 }
 
 module.exports = function (error, value) {

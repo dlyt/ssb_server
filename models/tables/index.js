@@ -27,6 +27,7 @@ module.exports = (db) => {
 		UserPoint: require('./userPoint')(db),
 		SerialNumber: require('./serialNumber')(db),
 		Secret: require('./secret')(db),
-		GlobalSetting: require('./globalSetting')(db)
+		GlobalSetting: require('./globalSetting')(db),
+		Business: require('./business')(db),
 	}
 }

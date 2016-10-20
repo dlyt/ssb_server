@@ -19,19 +19,24 @@ cache.hset('jsonwebtoken', '', '')
 token.encode = function(user, cb) {
     lightco.run(function*($) {
         try {
-            if (!user || !user.user_id)
-				return cb(new Error('无效的user!'))
+            if (!user)
+                return cb(new Error('无效的user!'))
 
-            const id = user.user_id.toString()
+            if (user.user_id)
+                var id = user.user_id.toString()
+
+            if (user.business_id)
+                var id = user.business_id.toString()
+
             const token = jwt.sign({id: id}, secret, {expiresIn: expire})
             var [err] = yield cache.hset('jsonwebtoken', id, token, $)
             if (err) throw err
 
-			if (cb) cb(null, token)
+			      if (cb) cb(null, token)
 
         } catch (e) {
-			logger.warn(e)
-			if (cb) cb(e)
+      			logger.warn(e)
+      			if (cb) cb(e)
         }
     })
 }
@@ -40,10 +45,15 @@ token.encode = function(user, cb) {
 token.del = function(user, cb) {
     lightco.run(function*($) {
         try {
-            if (!user || !user.user_id)
-				return cb(new Error('无效的user!'))
+            if (!user)
+                return cb(new Error('无效的user!'))
 
-            const id = user.user_id.toString()
+            if (user.user_id)
+                var id = user.user_id.toString()
+
+            if (user.business_id)
+                var id = user.business_id.toString()
+
             var [err] = yield cache.hdel('jsonwebtoken', id, $)
             if (err) throw err
 
