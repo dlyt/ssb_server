@@ -43,7 +43,7 @@ router.all('/Validate', decode, Validate)    //验证
 function login(req, res, next){
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
 
       if (req.body.account)
           var account = req.body.account
@@ -94,7 +94,7 @@ function login(req, res, next){
 function logout(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       const user = req.user
@@ -114,7 +114,7 @@ function logout(req, res) {
 function verify(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
         if(req.body.serial) {
@@ -200,7 +200,7 @@ function use(req, res) {
   lightco.run(function* ($) {
     try {
 
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       if(req.body.serial) {
@@ -237,7 +237,7 @@ function query(req, res) {
   lightco.run(function* ($) {
     try {
 
-        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
         res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
         const def = Conf.const.business.limit_def
@@ -352,7 +352,7 @@ function query(req, res) {
 function decode(req, res, next) {
     lightco.run(function*($) {
         try {
-            res.header("Access-Control-Allow-Origin", "*");
+            res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
             res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
             var _token
@@ -398,7 +398,7 @@ function decode(req, res, next) {
 function info(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       const user = req.user
@@ -420,21 +420,21 @@ function info(req, res) {
 function rest(req, res){
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       if (req.body.name)
-          var business_name = req.body.name
+          var account = req.body.name
 
       if (req.body.password)
-          var business_password = req.body.password
+          var password = req.body.password
 
       if (req.body.new_password)
           var business_new_password = req.body.new_password
 
       var opt = {
         where : {
-          business_name : business_name,
+          account : account,
         },
         individualHooks : true,
         raw : true,
@@ -447,12 +447,12 @@ function rest(req, res){
       var [err, business_user] = yield Business.findOne(opt)
       if (err) throw err
 
-      var user_password = business_user.business_password
+      var user_password = business_user.password
 
       if (business_user.length == 0 ) {
           return  res.json('Username is not exist')
       } else {
-          const isMatch = bcrypt.compareSync(business_password,user_password)
+          const isMatch = bcrypt.compareSync(password,user_password)
           if (!isMatch) {
                 return res.json(Conf.promise('1','密码匹配错误'))
           }
@@ -463,7 +463,7 @@ function rest(req, res){
       var hash = bcrypt.hashSync(date.business_password, salt);
 
       var value = {
-            business_password : hash,
+            password : hash,
             last_update : moment().format('YYYY-MM-DD HH:mm:ss'),
       }
 
@@ -485,7 +485,7 @@ function rest(req, res){
 
 //token验证
 function Validate(req, res) {
-      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com/");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       res.json(Conf.promise('0', 'OK'))
