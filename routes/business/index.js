@@ -43,7 +43,7 @@ router.all('/Validate', decode, Validate)    //验证
 function login(req, res, next){
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
 
       if (req.body.account)
           var account = req.body.account
@@ -94,7 +94,7 @@ function login(req, res, next){
 function logout(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       const user = req.user
@@ -114,7 +114,7 @@ function logout(req, res) {
 function verify(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
         if(req.body.serial) {
@@ -200,7 +200,7 @@ function use(req, res) {
   lightco.run(function* ($) {
     try {
 
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       if(req.body.serial) {
@@ -237,7 +237,7 @@ function query(req, res) {
   lightco.run(function* ($) {
     try {
 
-        res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+        res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
         res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
         const def = Conf.const.business.limit_def
@@ -352,7 +352,7 @@ function query(req, res) {
 function decode(req, res, next) {
     lightco.run(function*($) {
         try {
-            res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+            res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
             res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
             var _token
@@ -398,7 +398,7 @@ function decode(req, res, next) {
 function info(req, res) {
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       const user = req.user
@@ -420,7 +420,7 @@ function info(req, res) {
 function rest(req, res){
   lightco.run(function* ($) {
     try {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       if (req.body.name)
@@ -485,7 +485,7 @@ function rest(req, res){
 
 //token验证
 function Validate(req, res) {
-      res.header("Access-Control-Allow-Origin", "http://ht.91buyin.com");
+      res.header("Access-Control-Allow-Origin", "https://ht.91buyin.com");
       res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
 
       res.json(Conf.promise('0', 'OK'))
