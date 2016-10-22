@@ -23,7 +23,7 @@ module.exports = (db) => {
         },
         state: {
             type: Sequelize.INTEGER,
-			allowNull: false
+	          allowNull: false
         },
         trade_state: {
             type: Sequelize.STRING(50)
@@ -36,11 +36,12 @@ module.exports = (db) => {
 			allowNull: false
         },
         pay_datetime: {
-            type: Sequelize.DATE
+            type: Sequelize.DATE,
+            defaultValue: Sequelize.NOW
         },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'payment',
