@@ -168,7 +168,7 @@ function match_join(req, res) {
                     attributes: ['name'],
                     include: [{
                         model: Organization,
-                        attributes: ['name']
+                        attributes: ['name','organization_id']
                     }]
                 }]
             }
