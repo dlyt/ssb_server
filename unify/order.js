@@ -237,7 +237,7 @@ function order_refresh(order, cb) {
                                 if (transaction) transaction.rollback()
                                 return cb(e, null)
                             }
-                        }
+                        })
                     }
 
                     search()
