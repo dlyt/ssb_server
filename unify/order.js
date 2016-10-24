@@ -213,7 +213,7 @@ function order_refresh(order, cb) {
                         lightco.run(function*($) {
                             try {
                               /* 生成12位序列号 */
-                              var code = Unify.rand12()
+                              var code = Utility.rand12()
 
                               var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
                               if (err) throw err;
