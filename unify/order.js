@@ -209,17 +209,41 @@ function order_refresh(order, cb) {
                     var [err, serial] = yield SerialNumber.create(new_serial, opts)
                     if (err) return cb(err)
 
-                    /* 生成8位序列号 */
-                    var [err, code] = yield product_serialNo(serial, hex_key, $)
-                    if (err) return cb(err)
+                    var search = function () {
+                        lightco.run(function*($) {
+                            try {
+                              /* 生成12位序列号 */
+                              var code = Unify.rand12()
 
-                    serial.seria_No = code
+                              var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
+                              if (err) throw err;
 
-                    /* 保存 */
-                    var [err] = yield serial.save(opts)
-                    if (err) return cb(err)
+                              if (serialNumber) {
+                                  search()
+                              } else {
 
-                    cb(null, null)
+                                  serial.seria_No = code
+
+                                  /* 保存 */
+                                  var [err] = yield serial.save(opts)
+                                  if (err) return cb(err)
+
+                                  cb(null, null)
+                              }
+
+
+                            } catch (e) {
+                                logger.warn(e)
+                                if (transaction) transaction.rollback()
+                                return cb(e, null)
+                            }
+                        }
+                    }
+
+                    search()
+
+
+
                 })
             }
 
@@ -227,7 +251,7 @@ function order_refresh(order, cb) {
             var [err] = yield async.times(order.quantity, idt, $)
             if (err) throw err
 
-			transaction.commit()
+			      transaction.commit()
 
             return cb(null, updated)
 

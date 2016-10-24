@@ -66,6 +66,11 @@ utility.rand6 = function() {
 	return util.format('%d000000', Math.floor(Math.random() * 999999)).substr(0, 6)
 }
 
+/* 12位随机数字 */
+utility.rand12 = function() {
+	return util.format('%d000000', Math.floor(Math.random() * 999999999999)).substr(0, 12)
+}
+
 /* uuid */
 utility.uuid = function() {
 	return uuid.v4()
