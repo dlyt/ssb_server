@@ -64,7 +64,8 @@ function casinos(req, res) {
                 ],
                 order: [['last_update', req.query.order || 'DESC']],
                 offset: toInt(req.query.offset, 0),
-                limit: toInt(req.query.limit, def)
+                limit: toInt(req.query.limit, def),
+                where: { isTempClub : 0 }
             }
 
             opts.limit = opts.limit > max ? max : opts.limit

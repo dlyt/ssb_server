@@ -37,6 +37,9 @@ module.exports = (db) => {
         intorduction: {
             type: Sequelize.TEXT
         },
+        isTempClub: {
+            type: Sequelize.INTEGER,
+        },
         last_update: {
             type: Sequelize.DATE,
             defaultValue: Sequelize.NOW
