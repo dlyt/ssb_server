@@ -30,9 +30,6 @@ function orders(req, res) {
             const def = Conf.const.order.limit_def
             const max = Conf.const.order.limit_max
 
-            const Match = order.bigMatch_id ? BigMatch : DailyMatch
-            const Serie = order.bigMatch_id ? BigMatchSerie : DailyMatchSerie
-
             let query = [{user_id: user.user_id}]
 
             if (req.query.havePay)
@@ -56,47 +53,31 @@ function orders(req, res) {
             var data = orders.rows
 
             for (var i = 0 , length = data.length; i < length; i++) {
-                  var bigMatch_id = data[i].bigMatch_id
-                  var dailyMatch_id = data[i].dailyMatch_id
 
-                  if (bigMatch_id == null) {
-                        const opt = {
-                            include: [{
-                                model: DailyMatchSerie,
-                                include: [{
-                                    model: Organization,
-                                    include: [{
-                                        model: Casino,
-                                    }]
-                                }]
-                            }],
-                            where: {'dailyMatch_id': dailyMatch_id}
-                        }
+                  const MatchId = data[i].bigMatch_id ? data[i].bigMatch_id : data[i].dailyMatch_id
+                  const Serie = data[i].bigMatch_id ? BigMatchSerie : DailyMatchSerie
+                  const oneMatch = data[i].bigMatch_id ? BigMatch : DailyMatch
 
-                        var [err, casinoName] = yield DailyMatch.find(opt)
-                        if (err) throw err
-
-                        data[i].dataValues.casinoName = casinoName.dailyMatchSerie.organization.casino.casino
-                        data[i].dataValues.matchName = casinoName.dailyMatchSerie.name
-                  } else {
-                        const opt = {
-                            include: [{
-                                model: BigMatchSerie,
-                                include: [{
-                                    model: Organization,
-                                    include: [{
-                                        model: Casino,
-                                    }]
-                                }]
-                            }],
-                            where: {'bigMatch_id': bigMatch_id}
-                        }
-                        var [err, casinoName] = yield BigMatch.find(opt)
-                        if (err) throw err
-
-                        data[i].dataValues.casinoName = casinoName.bigMatchSerie.organization.casino.casino
-                        data[i].dataValues.matchName = casinoName.bigMatchSerie.name
+                  const opt = {
+                      include: [{
+                          model: Serie,
+                          include: [{
+                              model: Organization,
+                              include: [{
+                                  model: Casino,
+                              }]
+                          }]
+                      }],
                   }
+
+                  var [err, casinoName] = yield oneMatch.findById(MatchId, opt)
+                  if (err) throw err
+
+                  const oneMatchSerie = casinoName.bigMatchSerie ? casinoName.bigMatchSerie : casinoName.dailyMatchSerie
+
+                  data[i].dataValues.casinoName = oneMatchSerie.organization.casino.casino
+                  data[i].dataValues.matchName = oneMatchSerie.name
+
             }
 
             res.json(Conf.promise('0', orders))
