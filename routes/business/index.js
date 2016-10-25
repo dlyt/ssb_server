@@ -280,7 +280,7 @@ function query(req, res) {
             where: {$and: query},
             include: include,
             order: [['order_id', req.query.order || 'ASC']],
-            offset: toInt(req.query.offset, 0),
+            offset: toInt(req.body.offset, 0),
             limit: toInt(def),
             //raw: true,
             //logging: true,
