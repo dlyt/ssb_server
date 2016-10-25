@@ -69,15 +69,19 @@ function order_refresh(order, cb) {
 	lightco.run(function*($) {
         var transaction
         try {
-			var [err, transaction] = yield sequelize.transaction()
-            if (err) throw err
+      			var [err, transaction] = yield sequelize.transaction()
+                  if (err) throw err
 
-			let opts = {
-				transaction: transaction
-			}
+      			let opts = {
+      				transaction: transaction
+      			}
+
             /* 先锁 */
             order.last_update = new Date()
             [err, order] = yield order.save(opts)
+            if (err) throw err
+
+            [err, order] = Order.findById(order.order_id, opts)
             if (err) throw err
 
             /* 再查 */
@@ -91,31 +95,31 @@ function order_refresh(order, cb) {
             if (err) throw err
 
             /* 没有支付记录 */
-			if (!payments || !payments.length) {
-				transaction.rollback()
-				return cb(null, null)
-			}
+      			if (!payments || !payments.length) {
+      				transaction.rollback()
+      				return cb(null, null)
+      			}
 
-			var [err, results] = yield _refresh(payments, $)
+			      var [err, results] = yield _refresh(payments, $)
             if (err) throw err
 
             /* 查找是否有已支付流水 */
-			let payed_payment = _.find(results, {state: 1})
+      			let payed_payment = _.find(results, {state: 1})
 
-			if (!payed_payment) {
-				transaction.rollback()
-				return cb(null, null)
-			}
+      			if (!payed_payment) {
+      				transaction.rollback()
+      				return cb(null, null)
+      			}
 
-			/* 支付成功 */
-			order.have_pay = true
-			var [err, updated] = yield order.save(opts)
-			if (err) throw err
+      			/* 支付成功 */
+      			order.have_pay = true
+      			var [err, updated] = yield order.save(opts)
+      			if (err) throw err
 
             /* 数量验证 */
             var [err, count] = yield order.countOrderDetails(opts)
-			if (err) throw err
-            console.log(count)
+			      if (err) throw err
+
             if (count !== 0)
                 throw new Error('门票的detail数量非法!')
 
@@ -139,7 +143,7 @@ function order_refresh(order, cb) {
                 if (err) throw err
 
                 bigMatchSerie_id = serie.bigMatchSerie_id
-                hex_key = serie.secret.key
+                //hex_key = serie.secret.key
 
                 opts = {
                     where: {name: 'bigMatch_expire'}
@@ -164,7 +168,7 @@ function order_refresh(order, cb) {
                 if (err) throw err
 
                 dailyMatchSerie_id = serie.dailyMatchSerie_id
-                hex_key = serie.secret.key
+                //hex_key = serie.secret.key
 
                 opts = {
                     where: {name: 'dailyMatch_expire'}
@@ -176,8 +180,8 @@ function order_refresh(order, cb) {
                     expire_time = new Date(moment().add(settings.int, 'days'))
             }
 
-            if (!hex_key)
-                throw new Error(`${order.order_id} 所属比赛秘钥为空`)
+            // if (!hex_key)
+            //     throw new Error(`${order.order_id} 所属比赛秘钥为空`)
 
             if (!bigMatchSerie_id && !dailyMatchSerie_id)
                 throw new Error(`${order.order_id} 所属没有关联相关比赛`)
