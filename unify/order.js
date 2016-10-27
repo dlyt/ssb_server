@@ -143,7 +143,7 @@ function order_refresh(order, cb) {
                 const match_day = serie.match_day
                 const close_reg_time = serie.close_reg_time
 
-                const expire_time = match_day + ' ' + close_reg_time
+                expire_time = match_day + ' ' + close_reg_time
 
             }
 
