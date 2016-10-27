@@ -133,6 +133,7 @@ function order_refresh(order, cb) {
             /* 大赛 */
             if (order.bigMatch_id) {
                 let opts = {
+                        model: BigMatchSerie,
                         where: {bigMatch_id: order.bigMatch_id},
                 }
 
@@ -140,10 +141,13 @@ function order_refresh(order, cb) {
                 var [err, serie] = yield BigMatch.findOne(opts)
                 if (err) throw err
 
+                bigMatchSerie_id = serie.bigMatchSerie_id
+
                 const match_day = serie.match_day
                 const close_reg_time = serie.close_reg_time
 
-                expire_time = match_day + ' ' + close_reg_time
+                const expireTime = match_day + ' ' + close_reg_time
+                expire_time = moment(expireTime).tz('Asia/Shanghai').format()
 
             }
 
