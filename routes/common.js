@@ -10,11 +10,13 @@ const logger = log4js.getLogger('[routes-com]')
 
 const { City,
         Country,
+        Feedback,
         BigMatchTour } = Models
 
 router.get('/country', webcache.get, countries)
 router.get('/city', webcache.get, cities)
 router.get('/tour', webcache.get, tour)
+router.post('/back', Services.token.decode, back)
 
 
 function countries(req, res) {
@@ -109,6 +111,44 @@ function tour(req, res) {
 
                   res.json(pack)
             }
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function back(req, res) {
+    lightco.run(function*($) {
+        try {
+
+            if (req.body.title)
+                var title = req.body.title
+            else
+                return res.json(Conf.promise('6001'))
+
+            if (req.body.content)
+                var content = req.body.content
+            else
+                return res.json(Conf.promise('6002'))
+
+            const user_id = req.user.user_id
+
+            const new_back = {
+                user_id: user_id,
+                title: title,
+                content: content,
+            }
+
+            var [err, back] = yield Feedback.create(new_back)
+            if (err) throw err
+
+            if (!back)
+                throw new Error(`feedback:${feedback.feedback_id} 创建feedback失败`)
+            else
+                return res.json(Conf.promise('0'))
+
 
         } catch (e) {
             logger.warn(e)

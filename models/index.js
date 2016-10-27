@@ -68,6 +68,7 @@ t.Casino.belongsToMany(t.User, {through:t.CasinoVip , foreignKey: 'casino_id'})
 
 t.Order.belongsTo(t.User, {foreignKey: 'user_id'})
 t.Business.belongsTo(t.Organization, {foreignKey: 'organization_id'})
+t.User.hasMany(t.Feedback, {foreignKey: 'user_id'})
 
 /* 数据库鉴权 */
 db.authenticate().then(function(err) {

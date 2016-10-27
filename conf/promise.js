@@ -60,6 +60,9 @@ const promise = {
 
 	5001: '门票号不存在',
 	5002: '该门票号不属于本俱乐部',
+
+	6001: '标题不能为空',
+	6002: '内容不能为空',
 }
 
 module.exports = function (error, value) {
