@@ -153,7 +153,7 @@ function hot(req, res) {
                         }]
                     }]
                 }],
-                order: [['start_date', 'ASC'] , ['hot_level', 'ASC']],
+                order: [['hot_level', 'ASC'], ['start_date', 'ASC'] ],
                 offset: toInt(req.query.offset, 0),
                 limit: toInt(req.query.limit, def),
                 where: {

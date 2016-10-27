@@ -133,27 +133,18 @@ function order_refresh(order, cb) {
             /* 大赛 */
             if (order.bigMatch_id) {
                 let opts = {
-                    include: [
-                        {model: BigMatch, where: {bigMatch_id: order.bigMatch_id}},
-                        {model: Secret}
-                    ],
+                        where: {bigMatch_id: order.bigMatch_id},
                 }
+
                 /* 查找系类id 和 秘钥 */
-                var [err, serie] = yield BigMatchSerie.findOne(opts)
+                var [err, serie] = yield BigMatch.findOne(opts)
                 if (err) throw err
 
-                bigMatchSerie_id = serie.bigMatchSerie_id
-                //hex_key = serie.secret.key
+                const match_day = serie.match_day
+                const close_reg_time = serie.close_reg_time
 
-                opts = {
-                    where: {name: 'bigMatch_expire'}
-                }
-                /* 查找过期时间设置 */
-                var [err, settings] = yield GlobalSetting.findOne(opts)
-                if (err) throw err
+                const expire_time = match_day + ' ' + close_reg_time
 
-                if (settings && settings.int)
-                    expire_time = new Date(moment().add(settings.int, 'days'))
             }
 
             /* 日赛 */
