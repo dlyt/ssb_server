@@ -10,16 +10,22 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true
         },
-		have_used: {
+        bigMatchSerie_id: {
+            type: Sequelize.INTEGER,
+        },
+        dailyMatchSerie_id: {
+            type: Sequelize.INTEGER,
+        },
+		    have_used: {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },
-		used_time: {
+		    used_time: {
             type: Sequelize.DATE
         },
-		valid: {
+		    valid: {
             type: Sequelize.BOOLEAN,
-			allowNull: false
+			      allowNull: false
         },
         create_time: {
             type: Sequelize.DATE,
@@ -36,8 +42,8 @@ module.exports = (db) => {
             allowNull: false
         },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+			      type: Sequelize.DATE,
+			      defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'serialNumber',

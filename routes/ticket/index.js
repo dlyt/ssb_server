@@ -84,10 +84,11 @@ function tickets(req, res) {
             var data = tickets.rows
 
             for (var i = 0 , length = data.length; i < length; i++) {
+
               const orderInfo = data[i].orderDetail.order
               const MatchId = orderInfo.bigMatch_id ? orderInfo.bigMatch_id : orderInfo.dailyMatch_id
-              const Serie = data[i].bigMatch_id ? BigMatchSerie : DailyMatchSerie
-              const oneMatch = data[i].bigMatch_id ? BigMatch : DailyMatch
+              const Serie = data[i].bigMatchSerie_id ? BigMatchSerie : DailyMatchSerie
+              const oneMatch = data[i].bigMatchSerie_id ? BigMatch : DailyMatch
 
               const opt = {
                   include: [{
@@ -106,7 +107,6 @@ function tickets(req, res) {
               if (err) throw err
 
               const oneMatchSerie = casinoName.bigMatchSerie ? casinoName.bigMatchSerie : casinoName.dailyMatchSerie
-
               data[i].dataValues.casinoName = oneMatchSerie.organization.casino.casino
               data[i].dataValues.matchName = oneMatchSerie.name
 
