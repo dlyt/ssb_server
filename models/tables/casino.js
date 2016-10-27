@@ -40,6 +40,9 @@ module.exports = (db) => {
         isTempClub: {
             type: Sequelize.INTEGER,
         },
+        cooperated: {
+            type: Sequelize.INTEGER,
+        },
         last_update: {
             type: Sequelize.DATE,
             defaultValue: Sequelize.NOW
