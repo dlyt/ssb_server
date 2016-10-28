@@ -49,7 +49,7 @@ function login(req, res, next){
           var account = req.body.account
 
       if (req.body.password)
-          var password = toString(req.body.password)
+          var password = req.body.password
 
       const opt = {
           where : {
@@ -427,10 +427,10 @@ function rest(req, res){
           var account = req.body.name
 
       if (req.body.password)
-          var password = toString(req.body.password)
+          var password = req.body.password
 
       if (req.body.new_password)
-          var business_new_password = toString(req.body.new_password)
+          var business_new_password = req.body.new_password
 
       var opt = {
         where : {
@@ -507,7 +507,7 @@ function register(req, res){
           var account = req.body.account
 
       if (req.body.password)
-          var password = toString(req.body.password)
+          var password = req.body.password
 
       var [err, user] = yield Business.findOne({where: {account: account}})
       if (err) throw err
