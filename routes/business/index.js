@@ -34,7 +34,7 @@ router.all('/use', decode, use)              //使用门票
 router.all('/query', decode, query)          //订单查询
 router.all('/info', decode, info)            //获取信息
 router.all('/rest', rest)                    //修改密码
-router.get('/register', register)            //注册
+router.all('/register', register)            //注册
 router.all('/Validate', decode, Validate)    //验证
 
 
@@ -497,12 +497,29 @@ function register(req, res){
 
       let createAt = new Date()
 
-      var opt = {
-          business_id : '1',
-          organization_id : '22',
-          name : '跑跑',
-          account : '1',
-          password : '1',
+      if (req.body.organization_id)
+          var organization_id = req.body.organization_id
+
+      if (req.body.name)
+          var name = req.body.name
+
+      if (req.body.account)
+          var account = req.body.account
+
+      if (req.body.password)
+          var password = toString(req.body.password)
+
+      var [err, user] = yield Business.findOne({where: {account: account}})
+      if (err) throw err
+
+      if (user)
+          return res.json('该用户名已存在')
+
+      const opt = {
+          organization_id : organization_id,
+          name : name,
+          account : account,
+          password : password,
           createAt : createAt,
       }
 
@@ -511,10 +528,10 @@ function register(req, res){
 
       opt.password = hash
 
-      var [err] = yield Business.create(opt)
+        var [err] = yield Business.create(opt)
       if (err) throw err
 
-      res.json('ok')
+      res.json('注册成功')
     } catch (e) {
         logger.warn(e)
         return res.json(Conf.promise('1'))
