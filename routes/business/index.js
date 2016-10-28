@@ -49,7 +49,7 @@ function login(req, res, next){
           var account = req.body.account
 
       if (req.body.password)
-          var password = req.body.password
+          var password = toString(req.body.password)
 
       const opt = {
           where : {
