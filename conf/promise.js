@@ -63,6 +63,7 @@ const promise = {
 
 	6001: '标题不能为空',
 	6002: '内容不能为空',
+	6003: '请勿频繁反馈，稍后再试',
 }
 
 module.exports = function (error, value) {

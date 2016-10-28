@@ -6,6 +6,7 @@ const request = require('request')
 const express = require('express')
 const webcache = Services.cache.webcache
 const router = express.Router()
+const cache = Services.cache
 const logger = log4js.getLogger('[routes-com]')
 
 const { City,
@@ -134,6 +135,15 @@ function back(req, res) {
                 return res.json(Conf.promise('6002'))
 
             const user_id = req.user.user_id
+            const expire = Conf.user.feedback.expire
+
+            var [err, count] = yield cache.hget(`LOGIN_${user_id}`, 'try_count', $)
+            if (err) throw err
+
+            // /* 频繁反馈 */
+            count = Utility.toInt(count)
+            if (count >= 1)
+                return res.json(Conf.promise('6003'))
 
             const new_back = {
                 user_id: user_id,
@@ -144,11 +154,15 @@ function back(req, res) {
             var [err, back] = yield Feedback.create(new_back)
             if (err) throw err
 
-            if (!back)
+            if (!back) {
                 throw new Error(`feedback:${feedback.feedback_id} 创建feedback失败`)
-            else
-                return res.json(Conf.promise('0'))
+            }
+            else {
+                var [err] = yield cache.hset(`LOGIN_${user_id}`, 'try_count', count + 1, expire, $)
+                if (err) throw err
+            }
 
+            return res.json(Conf.promise('0'))
 
         } catch (e) {
             logger.warn(e)

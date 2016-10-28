@@ -40,4 +40,10 @@ user.try = {}
 user.try.expire = 60
 user.try.max = 2
 
+/* 用户登陆限制 */
+user.feedback = {}
+
+/* n秒钟内允许用户输入错误密码的次数 单位:秒 */
+user.feedback.expire = 900
+
 module.exports = user
