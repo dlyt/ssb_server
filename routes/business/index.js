@@ -427,10 +427,10 @@ function rest(req, res){
           var account = req.body.name
 
       if (req.body.password)
-          var password = req.body.password
+          var password = toString(req.body.password)
 
       if (req.body.new_password)
-          var business_new_password = req.body.new_password
+          var business_new_password = toString(req.body.new_password)
 
       var opt = {
         where : {
