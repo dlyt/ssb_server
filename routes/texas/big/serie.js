@@ -338,7 +338,7 @@ function serie_match(req, res) {
                     model: ExchangeRate,
                     attributes: ['exchangeRate_id', 'currency_name', 'exchange_rate', 'currency_code']
                 }],
-                order: [['last_update', req.query.order || 'DESC']],
+                order: [['match_day', 'ASC'], ['open_time','ASC']],
                 where : {'bigMatchSerie_id': id},
                 offset: toInt(req.query.offset, 0),
                 //limit: toInt(req.query.limit, def)
