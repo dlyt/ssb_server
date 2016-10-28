@@ -135,7 +135,7 @@ function match_join(req, res) {
             if (!user.realName || !user.idCard)
                 return res.json(Conf.promise('3009'))
 
-            if (!user.passportID || !user.oneWayPermit)
+            if (!user.passportID)
                 return res.json(Conf.promise('3010'))
 
             const order_amount_max = Conf.const.big.match.order_amount_max
