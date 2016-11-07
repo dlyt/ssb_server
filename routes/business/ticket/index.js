@@ -91,7 +91,7 @@ function verify(req, res) {
         const MatchName = MatchSerie.dataValues.name
         const MatchPrice = matchInfo.dataValues.unit_price
 
-        const date = {
+        const data = {
             seria_No: orderInfo.seria_No,
             match_Name: MatchName,
             user_id: orderInfo.user_id,
@@ -99,10 +99,12 @@ function verify(req, res) {
             user_Mobile: order.user.mobile,
             unit_Price: MatchPrice,
             serial_Status: orderInfo.have_used,
-            cardno: vip.cardno,
         }
 
-        res.json(Conf.promise('0', date))
+        if (vip)
+            data.cardno = vip.cardno
+
+        res.json(Conf.promise('0', data))
 
 
     } catch (e) {
