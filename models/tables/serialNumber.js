@@ -13,6 +13,9 @@ module.exports = (db) => {
         bigMatchSerie_id: {
             type: Sequelize.INTEGER,
         },
+        user_id: {
+            type: Sequelize.INTEGER,
+        },
         dailyMatchSerie_id: {
             type: Sequelize.INTEGER,
         },

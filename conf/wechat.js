@@ -37,7 +37,7 @@ let wechat = {
 		}
 	},
     /* 微信支付成功回调 指向后端服务器 */
-	reply: 'https://www.91buyin.com/notify/wechat'
+	reply: 'https://api.91buyin.com/notify/wechat'
 }
 
 module.exports = wechat

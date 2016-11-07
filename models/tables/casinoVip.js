@@ -10,12 +10,18 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true
         },
-        vip_No: {
-            type: Sequelize.STRING(50)
+        organization_id: {
+            type: Sequelize.INTEGER,
+        },
+        user_id: {
+            type: Sequelize.INTEGER,
+        },
+        cardno: {
+            type: Sequelize.STRING(255)
         },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'casinoVip',

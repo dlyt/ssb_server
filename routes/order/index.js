@@ -181,6 +181,7 @@ function order_pay(req, res) {
                 trade_type: 'APP',
                 notify_url: Conf.wechat.reply
             }
+
             var [err, result] = yield Services.wechat.order.unified(data, $)
             if (err) {
                 if (result) err = new Error(result.return_msg)

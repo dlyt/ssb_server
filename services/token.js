@@ -8,7 +8,7 @@ const logger = log4js.getLogger('[services-token]')
 const secret = Conf.user.jwt.secret
 const expire = Conf.user.jwt.expire
 
-const {User} = Models
+const {User, Business} = Models
 
 let token = {}
 
@@ -96,6 +96,49 @@ token.decode = function(req, res, next) {
                 return res.json(Conf.promise('1009'))
 
             var [err, user] = yield User.findById(id)
+            if (err) throw err
+
+            req.user = user
+            return next()
+
+        } catch (e) {
+            logger.warn(e)
+            res.json(Conf.promise('1'))
+        }
+    })
+}
+
+/* 验证 token 中间件  商家*/
+token.business_decode =  function(req, res, next) {
+    lightco.run(function*($) {
+        try {
+
+            var _token
+            if (req.headers && req.headers.authorization) {
+                var parts = req.headers.authorization.split(' ')
+                if (parts.length == 2) {
+                    var scheme = parts[0]
+                    var credentials = parts[1]
+                    if (/^Bearer$/i.test(scheme))
+                        _token = credentials
+                }
+            }
+            if (!_token)
+                return res.json(Conf.promise('1010'))
+
+            var [err, decoded] = yield jwt.verify(_token, secret, $)
+            if (err || !decoded) {
+                return res.json(Conf.promise('1009'))
+            }
+
+            var id = decoded.id || ''
+            var [err, token] = yield cache.hget('jsonwebtoken', id, $)
+            if (err) throw err
+
+            if (_token != token)
+                return res.json(Conf.promise('1009'))
+
+            var [err, user] = yield Business.findById(id)
             if (err) throw err
 
             req.user = user

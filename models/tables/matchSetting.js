@@ -12,23 +12,45 @@ module.exports = (db) => {
         },
         name: {
             type: Sequelize.STRING(50),
+            allowNull: true
+        },
+        blindTime: {
+            type: Sequelize.INTEGER,
+        },
+        chip: {
+            type: Sequelize.INTEGER,
+        },
+        organization_id: {
+            type: Sequelize.INTEGER,
             allowNull: false
         },
         structure: {
             type: Sequelize.TEXT,
-            allowNull: false
+            allowNull: true
         },
-        bonus: {
+        bonuses: {
             type: Sequelize.TEXT,
-            allowNull: false
+            allowNull: true
+        },
+        setting: {
+            type: Sequelize.TEXT,
+            allowNull: true
         },
         last_update: {
-			type: Sequelize.DATE,
-			defaultValue: Sequelize.NOW
+      			type: Sequelize.DATE,
+      			defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'matchSetting',
         freezeTableName: true,
-        timestamps: false
+        timestamps: false,
+        scopes: {
+          list: {
+                attributes: ['matchSetting_id', 'name']
+          },
+          detail: {
+                exclude: ['last_update', 'organization_id']
+          },
+        }
     })
 }

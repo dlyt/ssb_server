@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize')
 
-const db = new Sequelize('saishibao', 'ssb_admin', '123465', Conf.db.mysql)
+const db = new Sequelize('saishibao', 'root', '123456', Conf.db.mysql)
 
 /* 导入表格 */
 const t = require('./tables')(db)
@@ -63,8 +63,8 @@ t.User.hasMany(t.Order, {foreignKey: 'user_id'})
 t.User.hasMany(t.SerialNumber, {foreignKey: 'user_id'})
 t.User.hasMany(t.UserPoint, {foreignKey: 'user_id'})
 
-t.User.belongsToMany(t.Casino, {through:t.CasinoVip , foreignKey: 'user_id'})
-t.Casino.belongsToMany(t.User, {through:t.CasinoVip , foreignKey: 'casino_id'})
+t.User.hasMany(t.CasinoVip, {foreignKey: 'user_id'})
+t.Organization.hasMany(t.CasinoVip, {foreignKey: 'organization_id'})
 
 t.Order.belongsTo(t.User, {foreignKey: 'user_id'})
 t.Business.belongsTo(t.Organization, {foreignKey: 'organization_id'})
