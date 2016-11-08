@@ -45,8 +45,8 @@ module.exports = (db) => {
             type: Sequelize.STRING(20)
         },
         last_update: {
-			type: Sequelize.DATE,
-    			defaultValue: Sequelize.NOW
+			      type: Sequelize.DATE,
+    			  defaultValue: Sequelize.NOW
         }
     }, {
         tableName: 'user',

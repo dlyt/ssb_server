@@ -8,13 +8,13 @@ const router = express.Router()
 const toInt = Utility.toInt
 
 
-const { CasinoVip } = Models
+const { CasinoVip, User } = Models
 
 
 router.post('/add',Services.token.business_decode, add)          //添加会员
-router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)          //修改比赛结构表
-router.get('/settingList',Services.token.business_decode, settingList)
-router.get('/settingDetail',Services.token.business_decode, settingDetail)
+router.post('/query',Services.token.business_decode, query)      //查询会员信息
+
+
 
 function add(req, res) {
   lightco.run(function* ($) {
@@ -39,7 +39,7 @@ function add(req, res) {
         if (err) throw err
 
         if (vip)
-            return res.json(Conf.promise('2','会员卡号已存在'))
+            return res.json(Conf.promise('7002','会员卡号已存在'))
 
         const opts = {
             organization_id: organizationId,
@@ -60,75 +60,39 @@ function add(req, res) {
   })
 }
 
-function reviseMatchSetting(req, res) {
+function query(req, res) {
   lightco.run(function* ($) {
     try {
 
-        if (req.body.matchSettingData)
-            var matchSettingData = req.body.matchSettingData
+        if (req.body.cardno)
+            var cardno = req.body.cardno
         else
-            return res.json(Conf.promise('2','无效的信息'))
+            return res.json(Conf.promise('2','无效的会员卡号'))
 
-        if (!matchSettingData.organizationId)
+        if (req.user.organization_id)
+            var organizationId = req.user.organization_id
+        else
             return res.json(Conf.promise('2','无效的组织ID'))
 
-        var [err, info] = yield MatchSetting.findById(matchSettingData.id)
+        const opts = {
+            attributes: ['cardno'],
+            include: [{
+              model: User, attributes: ['realName', 'rickName', 'mobile', 'idCard'],
+            }],
+            where: {organization_id: organizationId, cardno: cardno},
+        }
+
+        var [err, vip] = yield CasinoVip.findOne(opts)
         if (err) throw err
 
-        info.name = matchSettingData.name
-        info.blindTime = matchSettingData.blindTime
-        info.chip = matchSettingData.chip
-        info.bonuses = matchSettingData.bonuses
-        info.setting = matchSettingData.setting
-
-        var [err, data] = yield info.save()
-        if (err) throw err
-
-        res.json(Conf.promise('0'))
-
+        if (vip)
+            res.json(Conf.promise('0', vip))
+        else
+            return res.json(Conf.promise('7001','会员卡号不存在'))
 
     } catch (e) {
-      logger.warn(e)
-      return res.json(Conf.promise('1'))
-    }
-  })
-}
-
-function settingList(req, res) {
-  lightco.run(function* ($) {
-    try {
-
-        const organizationId = req.user.organization_id
-
-        var [err, list] = yield MatchSetting.scope('list').findAll({where: {organization_id: organizationId}})
-        if (err) throw err
-
-        res.json(Conf.promise('0',list))
-
-
-    } catch (e) {
-      logger.warn(e)
-      return res.json(Conf.promise('1'))
-    }
-  })
-}
-
-function settingDetail(req, res) {
-  lightco.run(function* ($) {
-    try {
-
-        const id = req.query.id
-
-        var [err, detail] = yield MatchSetting.scope('detail').findById(id)
-        if (err) throw err
-
-
-        res.json(Conf.promise('0', detail))
-
-
-    } catch (e) {
-      logger.warn(e)
-      return res.json(Conf.promise('1'))
+        logger.warn(e)
+        return res.json(Conf.promise('1'))
     }
   })
 }

@@ -64,6 +64,7 @@ t.User.hasMany(t.SerialNumber, {foreignKey: 'user_id'})
 t.User.hasMany(t.UserPoint, {foreignKey: 'user_id'})
 
 t.User.hasMany(t.CasinoVip, {foreignKey: 'user_id'})
+t.CasinoVip.belongsTo(t.User, {foreignKey: 'user_id'})
 t.Organization.hasMany(t.CasinoVip, {foreignKey: 'organization_id'})
 
 t.Order.belongsTo(t.User, {foreignKey: 'user_id'})
