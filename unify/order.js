@@ -163,7 +163,7 @@ function order_refresh(order, cb) {
                 if (err) throw err
 
                 dailyMatchSerie_id = serie.dailyMatchSerie_id
-                //hex_key = serie.secret.key
+                hex_key = serie.secret.key
 
                 opts = {
                     where: {name: 'dailyMatch_expire'}
@@ -175,8 +175,8 @@ function order_refresh(order, cb) {
                     expire_time = new Date(moment().add(settings.int, 'days'))
             }
 
-            // if (!hex_key)
-            //     throw new Error(`${order.order_id} 所属比赛秘钥为空`)
+            if (!hex_key)
+                throw new Error(`${order.order_id} 所属比赛秘钥为空`)
 
             if (!bigMatchSerie_id && !dailyMatchSerie_id)
                 throw new Error(`${order.order_id} 所属没有关联相关比赛`)
