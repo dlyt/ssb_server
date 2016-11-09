@@ -11,13 +11,11 @@ const toInt = Utility.toInt
 const { MatchSetting } = Models
 
 
-router.post('/addMatchSetting',Services.token.business_decode, addMatchSetting)          //添加比赛结构表
+router.post('/addMatchSetting',Services.token.business_decode, addMatchSetting)                //添加比赛结构表
 router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)          //修改比赛结构表
 router.get('/settingList',Services.token.business_decode, settingList)
 router.get('/settingDetail',Services.token.business_decode, settingDetail)
 
-
-router.post('/', Services.token.business_decode, test)
 
 
 function addMatchSetting(req, res) {
@@ -128,20 +126,6 @@ function settingDetail(req, res) {
   })
 }
 
-function test(req, res) {
-  lightco.run(function* ($) {
-    try {
-
-        console.log(req.body);
-
-
-
-    } catch (e) {
-      logger.warn(e)
-      return res.json(Conf.promise('1'))
-    }
-  })
-}
 
 
 
