@@ -85,7 +85,6 @@ function match(req, res) {
             }
 
         } catch (e) {
-          console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
@@ -135,9 +134,6 @@ function match_join(req, res) {
             if (!user.realName || !user.idCard)
                 return res.json(Conf.promise('3009'))
 
-            if (!user.passportID)
-                return res.json(Conf.promise('3010'))
-
             const order_amount_max = Conf.const.big.match.order_amount_max
             const order_total_max = Conf.const.big.match.order_total_max
 
@@ -158,7 +154,7 @@ function match_join(req, res) {
                 ],
                 include:[{
                     model: BigMatchSerie,
-                    attributes: ['name'],
+                    attributes: ['name', 'type'],
                     include: [{
                         model: Organization,
                         attributes: ['organization_id', 'name']
@@ -174,6 +170,9 @@ function match_join(req, res) {
 
             if (match.state != 1)
                 return res.json(Conf.promise('3011'))
+
+            if (match.bigMatchSerie.type === 1 && !user.passportID)
+                return res.json(Conf.promise('3010'))
 
             /* 商家信息 */
             const serie = match.bigMatchSerie
