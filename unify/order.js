@@ -163,7 +163,7 @@ function order_refresh(order, cb) {
                 if (err) throw err
 
                 dailyMatchSerie_id = serie.dailyMatchSerie_id
-                hex_key = serie.secret.key
+                //hex_key = serie.secret.key
 
                 opts = {
                     where: {name: 'dailyMatch_expire'}
@@ -175,8 +175,8 @@ function order_refresh(order, cb) {
                     expire_time = new Date(moment().add(settings.int, 'days'))
             }
 
-            if (!hex_key)
-                throw new Error(`${order.order_id} 所属比赛秘钥为空`)
+            // if (!hex_key)
+            //     throw new Error(`${order.order_id} 所属比赛秘钥为空`)
 
             if (!bigMatchSerie_id && !dailyMatchSerie_id)
                 throw new Error(`${order.order_id} 所属没有关联相关比赛`)
@@ -208,51 +208,38 @@ function order_refresh(order, cb) {
                     var [err, serial] = yield SerialNumber.create(new_serial, opts)
                     if (err) return cb(err)
 
-                    /* 生成8位序列号 */
-                    var [err, code] = yield product_serialNo(serial, hex_key, $)
-                    if (err) return cb(err)
+                    var search = function () {
+                        lightco.run(function*($) {
+                            try {
+                              /* 生成12位序列号 */
+                              var code = Utility.rand12()
+
+                              var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
+                              if (err) throw err
+
+                              if (serialNumber) {
+                                  search()
+                              } else {
+
+                                  serial.seria_No = code
+
+                                  /* 保存 */
+                                  var [err] = yield serial.save(opts)
+                                  if (err) return cb(err)
+
+                                  cb(null, null)
+                              }
 
 
-                    serial.seria_No = code
+                            } catch (e) {
+                                logger.warn(e)
+                                if (transaction) transaction.rollback()
+                                return cb(e, null)
+                            }
+                        })
+                    }
 
-                    /* 保存 */
-                    var [err] = yield serial.save(opts)
-                    if (err) return cb(err)
-
-                    cb(null, null)
-
-                    // var search = function () {
-                    //     lightco.run(function*($) {
-                    //         try {
-                    //           /* 生成12位序列号 */
-                    //           var code = Utility.rand12()
-                    //
-                    //           var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
-                    //           if (err) throw err
-                    //
-                    //           if (serialNumber) {
-                    //               search()
-                    //           } else {
-                    //
-                    //               serial.seria_No = code
-                    //
-                    //               /* 保存 */
-                    //               var [err] = yield serial.save(opts)
-                    //               if (err) return cb(err)
-                    //
-                    //               cb(null, null)
-                    //           }
-                    //
-                    //
-                    //         } catch (e) {
-                    //             logger.warn(e)
-                    //             if (transaction) transaction.rollback()
-                    //             return cb(e, null)
-                    //         }
-                    //     })
-                    // }
-                    //
-                    // search()
+                    search()
 
 
 
