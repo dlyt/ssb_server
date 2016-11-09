@@ -208,38 +208,51 @@ function order_refresh(order, cb) {
                     var [err, serial] = yield SerialNumber.create(new_serial, opts)
                     if (err) return cb(err)
 
-                    var search = function () {
-                        lightco.run(function*($) {
-                            try {
-                              /* 生成12位序列号 */
-                              var code = Utility.rand12()
-
-                              var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
-                              if (err) throw err;
-
-                              if (serialNumber) {
-                                  search()
-                              } else {
-
-                                  serial.seria_No = code
-
-                                  /* 保存 */
-                                  var [err] = yield serial.save(opts)
-                                  if (err) return cb(err)
-
-                                  cb(null, null)
-                              }
+                    /* 生成8位序列号 */
+                    var [err, code] = yield product_serialNo(serial, hex_key, $)
+                    if (err) return cb(err)
 
 
-                            } catch (e) {
-                                logger.warn(e)
-                                if (transaction) transaction.rollback()
-                                return cb(e, null)
-                            }
-                        })
-                    }
+                    serial.seria_No = code
 
-                    search()
+                    /* 保存 */
+                    var [err] = yield serial.save(opts)
+                    if (err) return cb(err)
+
+                    cb(null, null)
+
+                    // var search = function () {
+                    //     lightco.run(function*($) {
+                    //         try {
+                    //           /* 生成12位序列号 */
+                    //           var code = Utility.rand12()
+                    //
+                    //           var [err, serialNumber] = yield SerialNumber.findOne({where: {seria_No: code}})
+                    //           if (err) throw err
+                    //
+                    //           if (serialNumber) {
+                    //               search()
+                    //           } else {
+                    //
+                    //               serial.seria_No = code
+                    //
+                    //               /* 保存 */
+                    //               var [err] = yield serial.save(opts)
+                    //               if (err) return cb(err)
+                    //
+                    //               cb(null, null)
+                    //           }
+                    //
+                    //
+                    //         } catch (e) {
+                    //             logger.warn(e)
+                    //             if (transaction) transaction.rollback()
+                    //             return cb(e, null)
+                    //         }
+                    //     })
+                    // }
+                    //
+                    // search()
 
 
 
