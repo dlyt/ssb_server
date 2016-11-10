@@ -38,12 +38,10 @@ function query(req, res) {
               Query.push({organization_id: req.user.organization_id})
         }
 
-
         if (req.body.have_clearing) {
               var clear = req.body.have_clearing
-              Query.push({have_clearing: req.user.have_clearing})
+              Query.push({have_clearing: req.body.have_clearing})
         }
-
 
         if (req.body.startTime) {
               var startTime = new Date(req.body.startTime)
@@ -54,6 +52,7 @@ function query(req, res) {
               var endTime = new Date(req.body.endTime)
               query.push({used_time : {$lte: endTime}})
         }
+        
 
         const include = [{
             model: User, attributes: ['realname', 'mobile'],
@@ -62,7 +61,10 @@ function query(req, res) {
             include: [{
                 model: Order, attributes: ['order_No', 'have_clearing'],
                 include: [{
-                    model: BigMatch, attributes: ['name', 'unit_price']
+                    model: BigMatch, attributes: ['unit_price'],
+                    include: [{
+                        model: BigMatchSerie, attributes: ['name']
+                    }]
                 },{
                     model: DailyMatch, attributes: ['unit_price'],
                     include: [{
@@ -88,60 +90,21 @@ function query(req, res) {
         const [err, orderInfo] = yield SerialNumber.findAndCountAll(opts)
         if (err) throw err
 
-        return res.json(Conf.promise('0', orderInfo))
-
-        // const [erre, sum] = yield SerialNumber.sum('SerialNumber.user_id',opts)
-        // if (erre) throw erre
-
-
-        //var data = orderInfo.rows
-
-        // for (var i = 0 , length = data.length; i < length; i++) {
-        //       var bigMatch_id = data[i].dataValues.bigMatch_id
-        //       var dailyMatch_id = data[i].dataValues.dailyMatch_id
-        //
-        //       if (bigMatch_id == null) {
-        //             const opt = {
-        //                 include: [{
-        //                     model: DailyMatchSerie,
-        //                 }],
-        //                 where: {'dailyMatch_id': dailyMatch_id}
-        //             }
-        //
-        //             var [error, casinoName] = yield DailyMatch.find(opt)
-        //             if (error) throw error
-        //
-        //             data[i].dataValues.matchName = casinoName.dailyMatchSerie.name
-        //       } else {
-        //             const opt = {
-        //                 include: [{
-        //                     model: BigMatchSerie,
-        //                 }],
-        //                 where: {'bigMatch_id': bigMatch_id}
-        //             }
-        //             var [error, casinoName] = yield BigMatch.find(opt)
-        //             if (error) throw error
-        //
-        //             data[i].dataValues.matchName = casinoName.bigMatchSerie.name
-        //       }
-        // }
+        var sql =" SELECT   sum(`orderDetail.order.bigMatch`.`unit_price`) AS `bigMatchPrice`  ,sum(`orderDetail.order.dailyMatch`.`unit_price`) AS `dailyMatchPrice` FROM `serialNumber` " +
+                      "LEFT OUTER JOIN `orderDetail`  ON `serialNumber`.`orderDetail_id` = `orderDetail`.`orderDetail_id` INNER JOIN `order` AS `orderDetail.order` ON `orderDetail`.`order_id` = `orderDetail.order`.`order_id` LEFT OUTER JOIN `bigMatch` AS `orderDetail.order.bigMatch` ON `orderDetail.order`.`bigMatch_id` = `orderDetail.order.bigMatch`.`bigMatch_id` LEFT OUTER JOIN `bigMatchSerie` AS `orderDetail.order.bigMatch.bigMatchSerie` ON `orderDetail.order.bigMatch`.`bigMatchSerie_id` = `orderDetail.order.bigMatch.bigMatchSerie`.`bigMatchSerie_id` LEFT OUTER JOIN `dailyMatch` AS `orderDetail.order.dailyMatch` ON `orderDetail.order`.`dailyMatch_id` = `orderDetail.order.dailyMatch`.`dailyMatch_id` LEFT OUTER JOIN `dailyMatchSerie` AS `orderDetail.order.dailyMatch.dailyMatchSerie` ON `orderDetail.order.dailyMatch`.`dailyMatchSerie_id` = `orderDetail.order.dailyMatch.dailyMatchSerie`.`dailyMatchSerie_id`" +
+            	        " where  `orderDetail.order`.`organization_id` = " + organization_id +
+            	        " and    `serialNumber`.`have_used` = '1'  " +
+                      " and    `serialNumber`.`used_time` > " +  " \"" + req.body.startTime + "\" " +
+                      " and    `serialNumber`.`used_time` < " + " \"" + req.body.endTime + "\" "
 
 
-        // var sql =" select SUM(`order`.amount) as amount FROM `order` " +
-        //               "INNER JOIN payment on order.order_id = payment.order_id " +
-        //     	        " where  organization_id = " + organization_id +
-        //     	        " and    have_pay = '1'  " +
-        //     	        " and    trade_state = 'SUCCESS' " +
-        //               " and    pay_datetime > " +  " \"" + req.body.start_day + "\" " +
-        //               " and    pay_datetime < " + " \"" + req.body.end_day + "\" "
-        //
-        // if (clear) sql += " and    have_clearing = " + " \"" + clear + "\" "
-        //
-        // sequelize.query(sql, { type: sequelize.QueryTypes.SELECT}).then(function (results) {
-        //        orderInfo.amount =  results[0].amount
-        //
-        //        let pack = res.json(Conf.promise('0', orderInfo))
-        // })
+        if (clear) sql += " and    `orderDetail.order`.`have_clearing` = " +  clear
+
+        sequelize.query(sql, { type: sequelize.QueryTypes.SELECT}).then(function (results) {
+               orderInfo.amount =  results[0].bigMatchPrice +  results[0].dailyMatchPrice
+               return res.json(Conf.promise('0', orderInfo))
+        })
+
 
 
     } catch (e) {
