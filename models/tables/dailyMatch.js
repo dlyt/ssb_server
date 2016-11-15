@@ -49,15 +49,11 @@ module.exports = (db) => {
         freezeTableName: true,
         timestamps: false,
         scopes: {
-            intro: {
-                attributes: {
-                    exclude: []
-                }
+            list: {
+                attributes: ['dailyMatch_id','match_day']
             },
             detail: {
-                attributes: {
-                    exclude: []
-                }
+                attributes: ['match_day', 'start_time', 'close_reg_time', 'unit_price', 'remark']
             }
         }
     })

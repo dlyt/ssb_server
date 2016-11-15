@@ -247,7 +247,7 @@ function register(req, res){
 
       opt.password = hash
 
-        var [err] = yield Business.create(opt)
+      var [err] = yield Business.create(opt)
       if (err) throw err
 
       res.json(Conf.promise('0'))

@@ -43,6 +43,9 @@ module.exports = (db) => {
                 attributes: {
                     exclude: ['need_show', 'secret_key']
                 }
+            },
+            list: {
+                attributes: ['dailyMatchSerie_id', 'name']
             }
         }
     })
