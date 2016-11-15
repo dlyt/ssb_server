@@ -20,19 +20,24 @@ function match_setting(req, res) {
 
             var [err, setting] = yield MatchSetting.scope('detail').findById(id)
             if (err) throw err
+            
+            setting.structure ={
+                "blindTime": JSON.parse(setting.dataValues.blindTime),
+                "chip": JSON.parse(setting.dataValues.chip),
+                "items": JSON.parse(setting.dataValues.setting),
+                "bonuses": JSON.parse(setting.dataValues.bonuses),
+                "remark": JSON.parse(setting.dataValues.remark),
+              }
 
-            setting.structure = {
-                blindTime: JSON.parse(setting.dataValues.blindTime),
-                chip: JSON.parse(setting.dataValues.chip),
-                items: JSON.parse(setting.dataValues.setting),
-                bonuses: JSON.parse(setting.dataValues.bonuses),
-                remark: JSON.parse(setting.dataValues.remark),
+              const data = {
+                  structure: JSON.stringify(setting.structure),
+                  remark: setting.remark,
               }
 
             if (setting == null) {
                 res.json(Conf.promise('3'))
             } else {
-                let pack = Conf.promise('0', setting)
+                let pack = Conf.promise('0', data)
 
                 yield webcache.set(req, JSON.stringify(pack), $)
 
