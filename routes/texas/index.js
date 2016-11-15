@@ -18,8 +18,15 @@ function match_setting(req, res) {
         try {
             const id = toInt(req.params.id)
 
-            var [err, setting] = yield MatchSetting.findById(id)
+            var [err, setting] = yield MatchSetting.scope('detail').findById(id)
             if (err) throw err
+
+            setting.structure = {}
+            setting.structure.blindTime =  setting.dataValues.blindTime
+            setting.structure.chip =  setting.dataValues.chip
+            setting.structure.items =  setting.dataValues.setting
+            setting.structure.bonuses =  setting.dataValues.bonuses
+            setting.structure.remark =  setting.dataValues.remark
 
             if (setting == null) {
                 res.json(Conf.promise('3'))

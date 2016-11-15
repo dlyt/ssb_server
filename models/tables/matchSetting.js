@@ -36,6 +36,10 @@ module.exports = (db) => {
             type: Sequelize.TEXT,
             allowNull: true
         },
+        remark: {
+            type: Sequelize.TEXT,
+            allowNull: true
+        },
         last_update: {
       			type: Sequelize.DATE,
       			defaultValue: Sequelize.NOW
@@ -49,7 +53,7 @@ module.exports = (db) => {
                 attributes: ['matchSetting_id', 'name']
           },
           detail: {
-                exclude: ['last_update', 'organization_id']
+                attributes: ['blindTime', 'chip', 'bonuses', 'setting', 'remark']
           },
         }
     })
