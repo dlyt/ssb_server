@@ -52,6 +52,11 @@ module.exports = (db) => {
             list: {
                 attributes: ['dailyMatch_id','match_day']
             },
+            intro: {
+                attributes: {
+                    exclude: []
+                }
+            },
             detail: {
                 attributes: ['match_day', 'start_time', 'close_reg_time', 'unit_price', 'remark']
             }
