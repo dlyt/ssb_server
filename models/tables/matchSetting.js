@@ -53,7 +53,7 @@ module.exports = (db) => {
                 attributes: ['matchSetting_id', 'name']
           },
           detail: {
-                attributes: ['blindTime', 'chip', 'bonuses', 'setting', 'remark']
+                attributes: ['matchSetting_id', 'name', 'blindTime', 'chip', 'bonuses', 'setting', 'remark']
           },
         }
     })
