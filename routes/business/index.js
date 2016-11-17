@@ -128,11 +128,13 @@ function info(req, res) {
     try {
 
       const user = req.user
+
       const result = {
           organizationId: user.organization_id,
           businessName: user.name,
           role: user.role,
       }
+
       return res.json(Conf.promise('0', result))
 
     } catch (e) {

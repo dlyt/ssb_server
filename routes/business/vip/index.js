@@ -3,7 +3,7 @@
 const lightco = require('lightco')
 const request = require('request')
 const express = require('express')
-const logger = log4js.getLogger('[routes-business]')
+const logger = log4js.getLogger('[routes-business-vip]')
 const router = express.Router()
 const toInt = Utility.toInt
 

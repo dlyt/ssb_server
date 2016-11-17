@@ -3,7 +3,7 @@
 const lightco = require('lightco')
 const request = require('request')
 const express = require('express')
-const logger = log4js.getLogger('[routes-business]')
+const logger = log4js.getLogger('[routes-business-match]')
 const router = express.Router()
 const toInt = Utility.toInt
 
@@ -12,6 +12,7 @@ const { DailyMatch,
         DailyMatchSerie,
         MatchSetting,    } = Models
 
+router.use('/bigMatch', require('./bigMatch'))
 router.use('/serie', require('./serie'))
 router.use('/setting', require('./setting'))
 router.post('/addMatch',Services.token.business_decode, addMatch)                //添加赛事

@@ -1,9 +1,8 @@
 'use strict'
 
 const lightco = require('lightco')
-const request = require('request')
 const express = require('express')
-const logger = log4js.getLogger('[routes-business]')
+const logger = log4js.getLogger('[routes-business-matchSetting]')
 const router = express.Router()
 const toInt = Utility.toInt
 
