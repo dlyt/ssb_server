@@ -183,8 +183,10 @@ function version(req, res) {
                 order: [['versionManager_id', 'DESC']],
             }
 
-            var [err, version] = yield VersionManager.scope('info').findAll(opts)
+            var [err, version] = yield VersionManager.scope('info').findOne(opts)
             if (err) throw err
+
+
 
             return res.json(Conf.promise('0', version))
 
