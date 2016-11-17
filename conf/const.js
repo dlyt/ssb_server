@@ -23,7 +23,7 @@ let exp = {
             limit_def: 5,
 			limit_max: 10,
             order_amount_max: 100,
-            order_total_max: 10000
+            order_total_max: 15000
         }
     },
     daily: {
