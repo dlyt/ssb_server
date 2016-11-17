@@ -30,5 +30,6 @@ module.exports = (db) => {
 		GlobalSetting: require('./globalSetting')(db),
 		Business: require('./business')(db),
 		Feedback: require('./feedback')(db),
+		VersionManager: require('./versionManager')(db),
 	}
 }

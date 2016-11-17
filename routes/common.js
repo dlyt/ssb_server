@@ -12,12 +12,14 @@ const logger = log4js.getLogger('[routes-com]')
 const { City,
         Country,
         Feedback,
-        BigMatchTour } = Models
+        BigMatchTour,
+        VersionManager, } = Models
 
 router.get('/country', webcache.get, countries)
 router.get('/city', webcache.get, cities)
 router.get('/tour', webcache.get, tour)
 router.post('/back', Services.token.decode, back)
+router.get('/version', version)
 
 
 function countries(req, res) {
@@ -163,6 +165,28 @@ function back(req, res) {
             }
 
             return res.json(Conf.promise('0'))
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function version(req, res) {
+    lightco.run(function*($) {
+        try {
+
+            const opts = {
+                limit: 1,
+                offset: 0,
+                order: [['versionManager_id', 'DESC']],
+            }
+
+            var [err, version] = yield VersionManager.scope('info').findAll(opts)
+            if (err) throw err
+
+            return res.json(Conf.promise('0', version))
 
         } catch (e) {
             logger.warn(e)
