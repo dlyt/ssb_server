@@ -2,6 +2,7 @@
 
 const lightco = require('lightco')
 const express = require('express')
+const moment = require('moment')
 const Sequelize = require('sequelize')
 const router = express.Router()
 const logger = log4js.getLogger('[routes-big-serie]')
@@ -42,8 +43,14 @@ function series(req, res) {
             /* 按月查询 */
             if (req.query.month) {
                 const m = req.query.month
-                query.push(S.where(S.fn('PERIOD_DIFF',S.fn('DATE_FORMAT',S.col('start_date'),'%Y%m'),m),'<=',0))
-                query.push(S.where(S.fn('PERIOD_DIFF',S.fn('DATE_FORMAT',S.col('end_date'),'%Y%m'),m),'>=',0))
+                const length = m.length
+                if (length === 4) {
+                  query.push(S.where(S.fn('PERIOD_DIFF',S.fn('DATE_FORMAT',S.col('start_date'),'%Y'),m),'=',0))
+                }
+                if (length === 6) {
+                  query.push(S.where(S.fn('PERIOD_DIFF',S.fn('DATE_FORMAT',S.col('start_date'),'%Y%m'),m),'<=',0))
+                  query.push(S.where(S.fn('PERIOD_DIFF',S.fn('DATE_FORMAT',S.col('end_date'),'%Y%m'),m),'>=',0))
+                }
             }
 
             /* 按天查询 */
@@ -131,6 +138,7 @@ function hot(req, res) {
 
             const def = Conf.const.big.serie.limit_def
             const max = Conf.const.big.serie.limit_max
+            const timeline = new Date(moment().subtract(3, 'days'))
 
             let opts = {
                 include: [{
@@ -158,7 +166,7 @@ function hot(req, res) {
                 limit: toInt(req.query.limit, def),
                 where: {
                     is_hot: 1,
-                    end_date: {$gte: new Date()}
+                    end_date: {$gte: timeline}
                 }
             }
 

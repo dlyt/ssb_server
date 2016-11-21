@@ -9,7 +9,9 @@ const router = express.Router()
 const cache = Services.cache
 const logger = log4js.getLogger('[routes-com]')
 
-const { City,
+const { Address,
+        Casino,
+        City,
         Country,
         Feedback,
         BigMatchTour,
@@ -17,6 +19,7 @@ const { City,
 
 router.get('/country', webcache.get, countries)
 router.get('/city', webcache.get, cities)
+router.get('/cityClub', webcache.get, cityClub)
 router.get('/tour', webcache.get, tour)
 router.post('/back', Services.token.decode, back)
 router.get('/version', version)
@@ -85,6 +88,49 @@ function cities(req, res) {
 
 
         } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function cityClub(req, res) {
+    lightco.run(function*($) {
+        try {
+
+            if (req.query.country)
+                var country = {country: req.query.country}
+
+            const opts = {
+                include: [{
+                    model: Country, attributes: [],
+                    where: country || {}
+                },{
+                    model: Address, attributes: ['address_id'],
+                    include: [{
+                        model: Casino, attributes: ['casino_id', 'isTempClub'],
+                        where: {isTempClub: 0}
+                    }]
+                }]
+            }
+
+            var [err, cities] = yield City.scope('intro').findAndCountAll(opts)
+            if (err) throw err
+
+            if (cities.count === 0) {
+                  return res.json(Conf.promise('3'))
+
+            } else {
+                  let pack = Conf.promise('0', cities)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+
+        } catch (e) {
+            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }

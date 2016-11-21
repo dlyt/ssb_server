@@ -61,7 +61,10 @@ module.exports = (db) => {
                 attributes: {
                     exclude: ['contact_person']
                 }
-            }
+            },
+            club: {
+                attributes: ['isTempClub']
+            },
         }
     })
 }
