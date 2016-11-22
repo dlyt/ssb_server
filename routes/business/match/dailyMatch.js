@@ -108,7 +108,7 @@ function addResult(req, res) {
       const opts = {
           dailyMatch_id: id,
           name: name,
-          result: result,
+          result: JSON.stringify(result),
       }
 
       var [err, result] = yield DailyMatchResult.create(opts)
