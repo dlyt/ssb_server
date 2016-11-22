@@ -15,10 +15,10 @@ module.exports = (db) => {
             allowNull: false,
             unique: true
         },
-        continent: {
-            type: Sequelize.STRING(30),
-            allowNull: false
-        },
+        // continent: {
+        //     type: Sequelize.STRING(30),
+        //     allowNull: false
+        // },
         image_url: {
             type: Sequelize.STRING(255)
         },
