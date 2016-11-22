@@ -35,7 +35,7 @@ router.use('/match', require('./match'))
 router.use('/vip', require('./vip'))
 router.post('/login', login)
 router.post('/logout', Services.token.business_decode, logout)
-router.post('/info', Services.token.business_decode, info)            //获取信息
+router.get('/info', Services.token.business_decode, info)            //获取信息
 router.post('/rest', rest)                                            //修改密码
 router.post('/register', register)                                    //注册
 router.post('/Validate', Services.token.business_decode, Validate)    //验证

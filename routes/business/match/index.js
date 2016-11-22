@@ -13,6 +13,7 @@ const { DailyMatch,
         MatchSetting,    } = Models
 
 router.use('/bigMatch', require('./bigMatch'))
+router.use('/dailyMatch', require('./dailyMatch'))
 router.use('/serie', require('./serie'))
 router.use('/setting', require('./setting'))
 router.post('/addMatch',Services.token.business_decode, addMatch)                //添加赛事
@@ -126,7 +127,7 @@ function list(req, res) {
         const opts = {
             include: [{
                 model: DailyMatchSerie, attributes: ['name'],
-                where: {organization_id : req.user.organization_id}
+                where: {organization_id : req.query.id}
             }],
             where: {$and: query}
         }

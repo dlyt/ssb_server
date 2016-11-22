@@ -93,7 +93,7 @@ function serieList(req, res) {
   lightco.run(function* ($) {
     try {
 
-        const organizationId = req.user.organization_id
+        const organizationId = req.query.id
 
         var [err, list] = yield DailyMatchSerie.scope('list').findAll({where: {organization_id: organizationId}})
         if (err) throw err

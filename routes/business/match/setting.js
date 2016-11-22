@@ -62,9 +62,6 @@ function reviseMatchSetting(req, res) {
         else
             return res.json(Conf.promise('2','无效的信息'))
 
-        if (!matchSettingData.organizationId)
-            return res.json(Conf.promise('2','无效的组织ID'))
-
         var [err, info] = yield MatchSetting.findById(matchSettingData.id)
         if (err) throw err
 
@@ -91,8 +88,8 @@ function reviseMatchSetting(req, res) {
 function settingList(req, res) {
   lightco.run(function* ($) {
     try {
-
-        const organizationId = req.user.organization_id
+        const organizationId = req.query.id
+        console.log(organizationId);
 
         var [err, list] = yield MatchSetting.scope('list').findAll({where: {organization_id: organizationId}})
         if (err) throw err
