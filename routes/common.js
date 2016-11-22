@@ -4,6 +4,7 @@ const lightco = require('lightco')
 const async = require('async')
 const request = require('request')
 const express = require('express')
+const toInt = Utility.toInt
 const webcache = Services.cache.webcache
 const router = express.Router()
 const cache = Services.cache
@@ -17,11 +18,12 @@ const { Address,
         BigMatchTour,
         VersionManager, } = Models
 
+router.post('/back', Services.token.decode, back)
 router.get('/country', webcache.get, countries)
 router.get('/city', webcache.get, cities)
 router.get('/cityClub', webcache.get, cityClub)
 router.get('/tour', webcache.get, tour)
-router.post('/back', Services.token.decode, back)
+router.get('/flag', webcache.get, flag)
 router.get('/version', version)
 
 
@@ -130,7 +132,6 @@ function cityClub(req, res) {
 
 
         } catch (e) {
-            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }
@@ -211,6 +212,28 @@ function back(req, res) {
             }
 
             return res.json(Conf.promise('0'))
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function flag(req, res) {
+    lightco.run(function*($) {
+        try {
+
+            if (req.query.id)
+                var id = toInt(req.query.id)
+            else
+                return res.json(Conf.promise('2'))
+
+
+            var [err, flag] = yield Country.scope('img').findById(id)
+            if (err) throw err
+
+            return res.json(Conf.promise('0', flag))
 
         } catch (e) {
             logger.warn(e)

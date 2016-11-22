@@ -18,6 +18,9 @@ module.exports = (db) => {
             type: Sequelize.TEXT,
             allowNull: false
         },
+        remark: {
+            type: Sequelize.TEXT,
+        },
         last_update: {
 			type: Sequelize.DATE,
 			defaultValue: Sequelize.NOW

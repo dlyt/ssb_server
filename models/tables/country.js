@@ -36,6 +36,9 @@ module.exports = (db) => {
             },
             detail: {
                 attributes: ['country_id', 'country', 'continent', 'image_url']
+            },
+            img: {
+                attributes: ['image_url']
             }
         }
     })

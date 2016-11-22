@@ -57,6 +57,10 @@ module.exports = (db) => {
             type: Sequelize.STRING(50),
             allowNull: false
         },
+        isPromoted: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
         remark: {
             type: Sequelize.STRING(50)
         },
