@@ -2,7 +2,8 @@
 
 const Sequelize = require('sequelize')
 
-const db = new Sequelize('saishibao', 'ssb_admin', '123465', Conf.db.mysql)
+const db = new Sequelize('ssbTest', 'ssb_admin', '123465', Conf.db.mysql)
+//const db = new Sequelize('saishibao', 'root', '123456', Conf.db.mysql)
 
 /* 导入表格 */
 const t = require('./tables')(db)

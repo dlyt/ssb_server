@@ -58,7 +58,7 @@ module.exports = (db) => {
                 }
             },
             detail: {
-                attributes: ['match_day', 'start_time', 'close_reg_time', 'unit_price', 'remark']
+                attributes: ['match_day', 'start_time', 'close_reg_time', 'unit_price', 'remark', 'state']
             }
         }
     })

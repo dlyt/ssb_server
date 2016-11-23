@@ -3,6 +3,7 @@ const Sequelize = require('sequelize')
 module.exports = {
     mysql: {
         host: '121.43.61.192',
+        //host: 'localhost',
         port: 3306,
         dialect: 'mysql',
         timezone: 'Asia/Shanghai',  /* 时区 */

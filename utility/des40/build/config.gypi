@@ -64,7 +64,7 @@
     "globalignorefile": "/usr/local/etc/npmignore",
     "init_author_url": "",
     "maxsockets": "50",
-    "shell": "/bin/bash",
+    "shell": "/bin/zsh",
     "parseable": "",
     "shrinkwrap": "true",
     "init_license": "ISC",

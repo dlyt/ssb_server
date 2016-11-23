@@ -19,7 +19,8 @@ router.use('/setting', require('./setting'))
 router.post('/addMatch',Services.token.business_decode, addMatch)                //添加赛事
 router.get('/list',Services.token.business_decode, list)                         //赛事列表
 //router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)
-router.get('/detail',Services.token.business_decode, detail)
+router.get('/detail', detail)
+router.get('/state',Services.token.business_decode, state)
 
 
 
@@ -150,6 +151,35 @@ function detail(req, res) {
     try {
 
         const id = req.query.id
+
+        const opts = {
+            include: [{
+                model: DailyMatchSerie, attributes: ['name'],
+            },{
+                model: MatchSetting, attributes: ['name'],
+            }],
+            where: {dailyMatch_id: id}
+        }
+
+        var [err, detail] = yield DailyMatch.scope('detail').find(opts)
+        if (err) throw err
+
+        res.json(Conf.promise('0', detail))
+
+
+    } catch (e) {
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
+function state(req, res) {
+  lightco.run(function* ($) {
+    try {
+
+        if (req.body.state)
+            var id = req.body.state
 
         const opts = {
             include: [{
