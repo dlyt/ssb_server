@@ -54,7 +54,7 @@ module.exports = (db) => {
             allowNull: false
         },
     		cooperated: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.BOOLEAN,
             allowNull: false
         },
         is_hot: {
