@@ -15,10 +15,6 @@ module.exports = (db) => {
             allowNull: false,
             unique: true
         },
-        continent: {
-            type: Sequelize.STRING(30),
-            allowNull: false
-        },
         image_url: {
             type: Sequelize.STRING(255)
         },
@@ -32,10 +28,10 @@ module.exports = (db) => {
         timestamps: false,
         scopes: {
             intro: {
-                attributes: ['country_id', 'country', 'continent']
+                attributes: ['country_id', 'country']
             },
             detail: {
-                attributes: ['country_id', 'country', 'continent', 'image_url']
+                attributes: ['country_id', 'country', 'image_url']
             },
             img: {
                 attributes: ['image_url']
