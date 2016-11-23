@@ -1,5 +1,5 @@
 /*
- *
+ *大赛
  */
 const Sequelize = require('sequelize')
 
