@@ -25,8 +25,8 @@ function addMatchSerie(req, res) {
         else
             return res.json(Conf.promise('2','无效的信息'))
 
-        if (req.body.organization_id)
-            var organizationId = req.body.organization_id
+        if (req.user.organization_id)
+            var organizationId = req.user.organization_id
         else
             return res.json(Conf.promise('2','无效的组织ID'))
 
