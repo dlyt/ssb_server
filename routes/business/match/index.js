@@ -20,7 +20,7 @@ router.post('/addMatch',Services.token.business_decode, addMatch)               
 router.get('/list',Services.token.business_decode, list)                         //赛事列表
 //router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)
 router.get('/detail', detail)
-router.get('/state',Services.token.business_decode, state)
+router.post('/state',Services.token.business_decode, state)
 
 
 
@@ -52,7 +52,7 @@ function addMatch(req, res) {
              start_time: formInfo.startTime,
              close_reg_time: formInfo.endTime,
              unit_price: formInfo.price,
-             state: 0,
+             state: 1,
              style: 'hold‘em',
              remark: formInfo.remark,
         }
@@ -179,24 +179,31 @@ function state(req, res) {
     try {
 
         if (req.body.state)
-            var id = req.body.state
+            var state = req.body.state
+        else
+            return res.json(Conf.promise('2'))
 
-        const opts = {
-            include: [{
-                model: DailyMatchSerie, attributes: ['name'],
-            },{
-                model: MatchSetting, attributes: ['name'],
-            }],
-            where: {dailyMatch_id: id}
-        }
+        if (req.body.id)
+            var id = req.body.id
+        else
+            return res.json(Conf.promise('2'))
 
-        var [err, detail] = yield DailyMatch.scope('detail').find(opts)
+        var [err, info] = yield DailyMatch.findById(id)
         if (err) throw err
 
-        res.json(Conf.promise('0', detail))
+        if (!info)
+            return res.json(Conf.promise('2'))
+        else {
+            info.state = state
+            var [err] = yield info.save()
+            if (err) throw err
+        }
+
+        res.json(Conf.promise('0'))
 
 
     } catch (e) {
+      console.log(e);
       logger.warn(e)
       return res.json(Conf.promise('1'))
     }
