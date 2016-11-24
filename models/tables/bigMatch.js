@@ -61,6 +61,18 @@ module.exports = (db) => {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },
+        haveMatchSetting: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        haveMatchResult: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        haveMatchBonus: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
         remark: {
             type: Sequelize.STRING(50)
         },

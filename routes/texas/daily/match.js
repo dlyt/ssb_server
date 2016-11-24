@@ -68,7 +68,6 @@ function matchs(req, res) {
             }
 
         } catch (e) {
-            console.log(e);
             logger.warn(e)
             return res.json(Conf.promise('1'))
         }

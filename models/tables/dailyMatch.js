@@ -37,6 +37,18 @@ module.exports = (db) => {
             type: Sequelize.STRING(50),
             allowNull: false
         },
+        haveMatchSetting: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        haveMatchResult: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
+        haveMatchBonus: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false
+        },
         remark: {
             type: Sequelize.STRING(50)
         },
@@ -58,7 +70,9 @@ module.exports = (db) => {
                 }
             },
             detail: {
-                attributes: ['match_day', 'start_time', 'close_reg_time', 'unit_price', 'remark', 'state']
+                attributes: {
+                    exclude: ['style', 'last_update']
+                }
             }
         }
     })
