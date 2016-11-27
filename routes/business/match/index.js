@@ -55,6 +55,9 @@ function addMatch(req, res) {
              state: 1,
              style: 'hold‘em',
              remark: formInfo.remark,
+             haveMatchSetting: 1,
+             haveMatchBonus: 1,
+             haveMatchResult: 0,
         }
 
         for (var i = 0, j = formInfo.matchDays.length; i < j; i++ ) {
@@ -203,7 +206,6 @@ function state(req, res) {
 
 
     } catch (e) {
-      console.log(e);
       logger.warn(e)
       return res.json(Conf.promise('1'))
     }
