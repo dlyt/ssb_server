@@ -293,8 +293,19 @@ function show(req, res) {
             const opts = {
                 include: [{
                     model: BigMatchSerieShare, attributes: ['bigMatchSerieShare_id', 'introContent', 'tips', 'matchImageUrl']
+                },{
+                    model: Organization, attributes: ['organization_id'],
+                    include: [{
+                        model: Casino, attributes: ['address_id'],
+                        include: [{
+                            model: Address, attributes: ['address']
+                        }]
+                    }]
                 }],
-                where: {bigMatchSerie_id : id}
+                where: {bigMatchSerie_id : id},
+                attributes: {
+                    exclude: ['image_url', 'intro_content', 'intro_image_url']
+                }
             }
 
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findOne(opts)
