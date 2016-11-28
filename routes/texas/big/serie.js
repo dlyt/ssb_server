@@ -14,6 +14,7 @@ router.get('/', webcache.get, series)
 router.get('/hot', webcache.get, hot)
 router.get('/today', webcache.get, today)
 router.get('/:id', webcache.get, serie)
+router.get('/show/:id', webcache.get, show)
 router.get('/detail/:id', webcache.get, serie_detail)
 router.get('/match/:id', webcache.get, serie_match)
 router.get('/join/:id', webcache.get, serie_match)
@@ -22,6 +23,7 @@ router.get('/map/:id', webcache.get, serie_map)
 const { User,
         ExchangeRate,
         BigMatchSerie,
+        BigMatchSerieShare,
         BigMatch,
         BigMatchTour,
         Organization,
@@ -264,6 +266,38 @@ function serie(req, res) {
             const id = toInt(req.params.id)
 
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findById(id)
+            if (err) throw err
+
+            if (serie === null) {
+                  return res.json(Conf.promise('3'))
+            } else {
+                  let pack = Conf.promise('0', serie)
+
+                  yield webcache.set(req, JSON.stringify(pack), $)
+
+                  res.json(pack)
+            }
+
+        } catch (e) {
+            logger.warn(e)
+            return res.json(Conf.promise('1'))
+        }
+    })
+}
+
+function show(req, res) {
+    lightco.run(function*($) {
+        try {
+            const id = toInt(req.params.id)
+
+            const opts = {
+                include: [{
+                    model: BigMatchSerieShare, attributes: ['bigMatchSerieShare_id', 'introContent', 'tips', 'matchImageUrl']
+                }],
+                where: {bigMatchSerie_id : id}
+            }
+
+            var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findOne(opts)
             if (err) throw err
 
             if (serie === null) {

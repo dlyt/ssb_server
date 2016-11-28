@@ -8,6 +8,7 @@ const toInt = Utility.toInt
 
 
 const { Address,
+        BigMatch,
         BigMatchSerie,
         BigMatchTour,
         Casino,
@@ -19,8 +20,10 @@ const { Address,
 
 router.get('/tourList', tourList)                //巡回赛列表
 router.post('/addTour',Services.token.business_decode, addTour)
+router.post('/addBigMatch',Services.token.business_decode, addBigMatch)
 router.post('/addBigMatchSerie',Services.token.business_decode, addBigMatchSerie)
-//router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)
+router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)
+router.get('/setInfo', setInfo)
 router.get('/detail', detail)
 router.get('/serieList', serieList)
 router.get('/serieDetail', serieDetail)
@@ -50,24 +53,23 @@ function reviseMatchSetting(req, res) {
   lightco.run(function* ($) {
     try {
 
-        if (req.body.matchSettingData)
-            var matchSettingData = req.body.matchSettingData
+        if (req.body.setInfo)
+            var setInfo = req.body.setInfo
         else
             return res.json(Conf.promise('2','无效的信息'))
 
-        if (!matchSettingData.organizationId)
-            return res.json(Conf.promise('2','无效的组织ID'))
-
-        var [err, info] = yield MatchSetting.findById(matchSettingData.id)
+        var [err, bigMatch] = yield BigMatch.findById(setInfo.id)
         if (err) throw err
 
-        info.name = matchSettingData.name
-        info.blindTime = matchSettingData.blindTime
-        info.chip = matchSettingData.chip
-        info.bonuses = matchSettingData.bonuses
-        info.setting = matchSettingData.setting
+        bigMatch.can_register = setInfo.can_register
+        bigMatch.isPromoted = setInfo.isPromoted
+        bigMatch.state = setInfo.state
+        bigMatch.matchSetting_id = setInfo.matchSetting_id
+        bigMatch.haveMatchSetting = setInfo.haveMatchSetting
+        bigMatch.haveMatchBonus = setInfo.haveMatchBonus
+        bigMatch.haveMatchResult = setInfo.haveMatchResult
 
-        var [err, data] = yield info.save()
+        var [err, data] = yield bigMatch.save()
         if (err) throw err
 
         res.json(Conf.promise('0'))
@@ -106,6 +108,72 @@ function addTour(req, res) {
 
     } catch (e) {
       logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
+function addBigMatch(req, res) {
+  lightco.run(function* ($) {
+    try {
+
+      var transaction
+
+      var [err, transaction] = yield sequelize.transaction()
+      if (err) throw err
+
+      let opt = {
+          transaction: transaction,
+      }
+
+      if (req.body.id)
+          var id = req.body.id
+      else
+          return res.json(Conf.promise('2'))
+
+      if (req.body.bigMatchInfo)
+          var bigMatchInfo = req.body.bigMatchInfo
+      else
+          return res.json(Conf.promise('2'))
+
+      var length = bigMatchInfo.length
+
+      for (var i = 0;i < length; i++) {
+        var data = {
+            bigMatchSerie_id: id,
+            matchSetting_id: bigMatchInfo[i].matchsetting_id,
+            name: bigMatchInfo[i].name,
+            real_buyin: bigMatchInfo[i].real_buyin,
+            rake_buyin: bigMatchInfo[i].rake_buyin,
+            match_day: bigMatchInfo[i].match_day,
+            open_time: bigMatchInfo[i].open_time,
+            close_reg_time: bigMatchInfo[i].close_reg_time,
+            can_register: bigMatchInfo[i].can_register,
+            unit_price: bigMatchInfo[i].unit_price,
+            need_exchange: bigMatchInfo[i].need_exchange,
+            exchangeRate_id: bigMatchInfo[i].exchangerate_id,
+            state: bigMatchInfo[i].state,
+            style: '',
+            remark: bigMatchInfo[i].remark,
+            isPromoted: bigMatchInfo[i].ispromoted,
+            haveMatchSetting: bigMatchInfo[i].havematchsetting,
+            haveMatchBonus: bigMatchInfo[i].havematchbonus,
+            haveMatchResult: 0,
+        }
+
+        var [err, bigMatch] = yield BigMatch.create(data, opt)
+        if (err) throw err
+
+      }
+
+      transaction.commit()
+
+      res.json(Conf.promise('0'))
+
+
+    } catch (e) {
+      logger.warn(e)
+      if (transaction) transaction.rollback()
       return res.json(Conf.promise('1'))
     }
   })
@@ -158,22 +226,51 @@ function addBigMatchSerie(req, res) {
   })
 }
 
+function setInfo(req, res) {
+  lightco.run(function* ($) {
+    try {
+
+        const id = req.query.id
+
+        const opts = {
+            attributes: ['bigMatch_id', 'name', 'state', 'match_day', 'matchSetting_id', 'can_register', 'isPromoted', 'haveMatchSetting', 'haveMatchBonus', 'haveMatchResult'],
+            where: {bigMatch_id: id}
+        }
+
+        const matchSetting_opt = {
+            attributes: ['matchSetting_id', 'name'],
+            where: {organization_id: 85}
+        }
+
+        var [err, matchSetting] = yield MatchSetting.findAll(matchSetting_opt)
+        if (err) throw err
+
+        var [err, setInfo] = yield BigMatch.findOne(opts)
+        if (err) throw err
+
+        setInfo.dataValues.matchSetting = matchSetting
+
+        res.json(Conf.promise('0', setInfo))
+
+
+    } catch (e) {
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
 function detail(req, res) {
   lightco.run(function* ($) {
     try {
 
-        const id = req.params.id
+        const id = req.query.id
 
         const opts = {
-            include: [{
-                model: DailyMatchSerie, attributes: ['name'],
-            },{
-                model: MatchSetting, attributes: ['name'],
-            }],
-            where: {dailyMatch_id: id}
+            where: {bigMatchSerie_id: id}
         }
 
-        var [err, detail] = yield DailyMatch.scope('detail').find(opts)
+        var [err, detail] = yield BigMatch.findAndCountAll(opts)
         if (err) throw err
 
         res.json(Conf.promise('0', detail))
@@ -224,8 +321,20 @@ function serieDetail(req, res) {
         else
             return res.json(Conf.promise('2'))
 
-        var [err, detail] = yield BigMatchSerie.findById(id)
+        const opts = {
+            include: [{
+                model: BigMatch,attributes: ['bigMatch_id'],
+            }],
+            where: {bigMatchSerie_id: id}
+        }
+
+        var [err, detail] = yield BigMatchSerie.find(opts)
         if (err) throw err
+
+        if (detail.dataValues.bigMatches.length === 0)
+            detail.dataValues.bigMatches = 0
+        else
+            detail.dataValues.bigMatches = 1
 
         switch (detail.type) {
           case 1:

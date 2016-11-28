@@ -31,5 +31,6 @@ module.exports = (db) => {
 		Business: require('./business')(db),
 		Feedback: require('./feedback')(db),
 		VersionManager: require('./versionManager')(db),
+		BigMatchSerieShare: require('./bigMatchSerieShare')(db),
 	}
 }
