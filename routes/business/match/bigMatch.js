@@ -10,6 +10,7 @@ const toInt = Utility.toInt
 const { Address,
         BigMatch,
         BigMatchSerie,
+        BigMatchResult,
         BigMatchTour,
         Casino,
         City,
@@ -18,11 +19,13 @@ const { Address,
         MatchSetting,
         Organization } = Models
 
-router.get('/tourList', tourList)                //巡回赛列表
+router.get('/tourList', tourList)
 router.post('/addTour',Services.token.business_decode, addTour)
+router.post('/addResult',Services.token.business_decode, addResult)
 router.post('/addBigMatch',Services.token.business_decode, addBigMatch)
 router.post('/addBigMatchSerie',Services.token.business_decode, addBigMatchSerie)
 router.post('/reviseMatchSetting',Services.token.business_decode, reviseMatchSetting)
+router.post('/reviseMatchResult',Services.token.business_decode, reviseMatchResult)
 router.get('/setInfo', setInfo)
 router.get('/detail', detail)
 router.get('/serieList', serieList)
@@ -30,6 +33,9 @@ router.get('/serieDetail', serieDetail)
 router.get('/country', countries)
 router.get('/city', cities)
 router.get('/cityClub', cityClub)
+router.get('/resultLists', resultLists)
+router.get('/resultDetail', resultDetail)
+router.get('/isPromoted', isPromoted)
 
 
 function tourList(req, res) {
@@ -82,6 +88,49 @@ function reviseMatchSetting(req, res) {
   })
 }
 
+function reviseMatchResult(req, res) {
+  lightco.run(function* ($) {
+    try {
+
+        if (req.body.id)
+            var id = req.body.id
+        else
+            return res.json(Conf.promise('2'))
+
+        if (req.body.result)
+            var result = req.body.result
+        else
+            return res.json(Conf.promise('2'))
+
+        if (req.body.name)
+            var name = req.body.name
+        else
+            return res.json(Conf.promise('2'))
+
+        const opts = {
+            where: {bigMatch_id: id}
+        }
+
+        var [err, bigMatchResult] = yield BigMatchResult.findOne(opts)
+        if (err) throw err
+
+        bigMatchResult.name = name
+        bigMatchResult.result = JSON.stringify(result)
+
+        var [err, data] = yield bigMatchResult.save()
+        if (err) throw err
+
+        res.json(Conf.promise('0'))
+
+
+    } catch (e) {
+      console.log(e);
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
 function addTour(req, res) {
   lightco.run(function* ($) {
     try {
@@ -108,6 +157,61 @@ function addTour(req, res) {
 
     } catch (e) {
       logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
+function addResult(req, res) {
+  lightco.run(function* ($) {
+    try {
+
+      var transaction
+
+      var [err, transaction] = yield sequelize.transaction()
+      if (err) throw err
+
+      let opt = {
+          transaction: transaction,
+      }
+
+      if (req.body.id)
+          var id = req.body.id
+      else
+          return res.json(Conf.promise('2'))
+
+      if (req.body.result)
+          var result = req.body.result
+      else
+          return res.json(Conf.promise('2'))
+
+      const name = req.body.name
+
+      var [err, bigMatch] = yield BigMatch.findOne({where: {bigMatch_id : id}})
+      if (err) throw err
+
+      bigMatch.haveMatchResult = 1
+
+      var [err] = yield bigMatch.save(opt)
+      if (err) throw err
+
+      const result_opts = {
+          name: name,
+          result: JSON.stringify(result),
+          bigMatch_id: id,
+      }
+
+      var [err, result] = yield BigMatchResult.create(result_opts, opt)
+      if (err) throw err
+
+      transaction.commit()
+
+      res.json(Conf.promise('0'))
+
+
+    } catch (e) {
+      logger.warn(e)
+      if (transaction) transaction.rollback()
       return res.json(Conf.promise('1'))
     }
   })
@@ -464,6 +568,78 @@ function cityClub(req, res) {
             return res.json(Conf.promise('1'))
         }
     })
+}
+
+function resultLists(req, res) {
+  lightco.run(function* ($) {
+    try {
+        const id = req.query.id
+
+        const opts = {
+            include: [{
+                model: BigMatchResult, attributes: ['bigMatchResult_id']
+            }],
+            attributes: ['bigMatch_id', 'name', 'match_day'],
+            where: {bigMatchSerie_id: id}
+        }
+
+        var [err, lists] = yield BigMatch.findAndCountAll(opts)
+        if (err) throw err
+
+        res.json(Conf.promise('0', lists))
+
+
+    } catch (e) {
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
+function resultDetail(req, res) {
+  lightco.run(function* ($) {
+    try {
+        const id = req.query.id
+
+        const opts = {
+            attributes: ['name', 'result'],
+            where: {bigMatch_id: id}
+        }
+
+        var [err, detail] = yield BigMatchResult.findOne(opts)
+        if (err) throw err
+
+        res.json(Conf.promise('0', detail))
+
+
+    } catch (e) {
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
+}
+
+function isPromoted(req, res) {
+  lightco.run(function* ($) {
+    try {
+        const id = req.query.id
+
+        const opts = {
+            attributes: ['isPromoted'],
+            where: {bigMatch_id: id}
+        }
+
+        var [err, data] = yield BigMatch.findOne(opts)
+        if (err) throw err
+
+        res.json(Conf.promise('0', data))
+
+
+    } catch (e) {
+      logger.warn(e)
+      return res.json(Conf.promise('1'))
+    }
+  })
 }
 
 
