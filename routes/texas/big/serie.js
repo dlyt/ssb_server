@@ -292,7 +292,7 @@ function show(req, res) {
 
             const opts = {
                 include: [{
-                    model: BigMatchSerieShare, attributes: ['bigMatchSerieShare_id', 'introContent', 'tips', 'matchImageUrl']
+                    model: BigMatchSerieShare, attributes: {exclude: ['bigMatchSerie_id', 'last_update']}
                 },{
                     model: Organization, attributes: ['organization_id'],
                     include: [{

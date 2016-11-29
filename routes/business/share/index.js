@@ -44,12 +44,10 @@ function share(req, res) {
         var [err, share] = yield BigMatchSerieShare.scope('detail').findOne(opts)
         if (err) throw err
 
-        console.log(share);
         res.json(Conf.promise('0', share))
 
 
     } catch (e) {
-        console.log(e);
         logger.warn(e)
         return res.json(Conf.promise('1'))
     }

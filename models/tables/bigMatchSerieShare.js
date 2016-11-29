@@ -22,6 +22,12 @@ module.exports = (db) => {
     		matchImageUrl: {
             type: Sequelize.STRING(255)
         },
+        shareTitle: {
+            type: Sequelize.STRING(255)
+        },
+        shareDescription: {
+            type: Sequelize.STRING(255)
+        },
         last_update: {
       			type: Sequelize.DATE,
       			defaultValue: Sequelize.NOW
