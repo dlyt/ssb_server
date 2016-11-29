@@ -311,6 +311,8 @@ function show(req, res) {
             var [err, serie] = yield BigMatchSerie.scope('show', 'detail').findOne(opts)
             if (err) throw err
 
+            serie.dataValues.share = 'https://ht.91buyin.com/share/'
+
             if (serie === null) {
                   return res.json(Conf.promise('3'))
             } else {
