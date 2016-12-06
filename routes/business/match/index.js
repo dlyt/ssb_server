@@ -10,6 +10,7 @@ const toInt = Utility.toInt
 
 const { DailyMatch,
         DailyMatchSerie,
+        Discount,
         MatchSetting,    } = Models
 
 router.use('/bigMatch', require('./bigMatch'))
@@ -31,7 +32,7 @@ function addMatch(req, res) {
         var [err, transaction] = yield sequelize.transaction()
         if (err) throw err
 
-        let opts = {
+        let opt = {
           transaction: transaction
         }
 
@@ -45,13 +46,15 @@ function addMatch(req, res) {
         else
             return res.json(Conf.promise('2','无效的组织ID'))
 
+        const facePrice = formInfo.facePrice
+        const discountValue = formInfo.discountValue
 
         const dailyMatchInfo = {
              dailyMatchSerie_id: formInfo.matchSerie,
              matchSetting_id: formInfo.matchSetting,
              start_time: formInfo.startTime,
              close_reg_time: formInfo.endTime,
-             unit_price: formInfo.price,
+             face_price: facePrice,
              state: 1,
              style: 'hold‘em',
              remark: formInfo.remark,
@@ -60,9 +63,27 @@ function addMatch(req, res) {
              haveMatchResult: 0,
         }
 
+        const discountInfo = {}
+
+        if (formInfo.discountWay == 0) {
+          discountInfo.abs_value = discountValue
+          dailyMatchInfo.unit_price = facePrice - discountValue
+        }
+        else {
+          discountInfo.rel_value = discountValue
+          dailyMatchInfo.unit_price = facePrice * (1 - discountValue/100)
+        }
+
+        var [err, discount] = yield Discount.create(discountInfo, opt)
+        if (err) throw err
+
+        dailyMatchInfo.discount_id = discount.discount_id
+
         for (var i = 0, j = formInfo.matchDays.length; i < j; i++ ) {
+
             dailyMatchInfo.match_day = formInfo.matchDays[i]
-            var [err, dailyMatch] = yield DailyMatch.create(dailyMatchInfo, opts)
+
+            var [err, dailyMatch] = yield DailyMatch.create(dailyMatchInfo, opt)
             if (err) throw err
         }
 

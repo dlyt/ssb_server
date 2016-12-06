@@ -16,6 +16,7 @@ const { Address,
         City,
         Country,
         DailyMatchSerie,
+        Discount,
         MatchSetting,
         Organization } = Models
 
@@ -59,6 +60,16 @@ function reviseMatchSetting(req, res) {
   lightco.run(function* ($) {
     try {
 
+        var transaction
+        const discountInfo = {}
+
+        var [err, transaction] = yield sequelize.transaction()
+        if (err) throw err
+
+        let opt = {
+            transaction: transaction,
+        }
+
         if (req.body.setInfo)
             var setInfo = req.body.setInfo
         else
@@ -66,6 +77,26 @@ function reviseMatchSetting(req, res) {
 
         var [err, bigMatch] = yield BigMatch.findById(setInfo.id)
         if (err) throw err
+
+        let discountValue = setInfo.discountValue
+        let facePrice = bigMatch.face_price
+
+        if (discountValue) {
+            if (setInfo.discountWay == 0) {
+              discountInfo.abs_value = discountValue
+              bigMatch.unit_price = facePrice - discountValue
+            }
+            else {
+              discountInfo.rel_value = discountValue
+              bigMatch.unit_price = facePrice * (1 - discountValue/100)
+            }
+
+            var [err, discount] = yield Discount.create(discountInfo, opt)
+            if (err) throw err
+
+            bigMatch.discount_id = discount.discount_id
+        }
+
 
         bigMatch.can_register = setInfo.can_register
         bigMatch.isPromoted = setInfo.isPromoted
@@ -75,14 +106,17 @@ function reviseMatchSetting(req, res) {
         bigMatch.haveMatchBonus = setInfo.haveMatchBonus
         bigMatch.haveMatchResult = setInfo.haveMatchResult
 
-        var [err, data] = yield bigMatch.save()
+        var [err, data] = yield bigMatch.save(opt)
         if (err) throw err
+
+        transaction.commit()
 
         res.json(Conf.promise('0'))
 
 
     } catch (e) {
       logger.warn(e)
+      if (transaction) transaction.rollback()
       return res.json(Conf.promise('1'))
     }
   })
@@ -124,7 +158,6 @@ function reviseMatchResult(req, res) {
 
 
     } catch (e) {
-      console.log(e);
       logger.warn(e)
       return res.json(Conf.promise('1'))
     }
@@ -253,10 +286,10 @@ function addBigMatch(req, res) {
             open_time: bigMatchInfo[i].open_time,
             close_reg_time: bigMatchInfo[i].close_reg_time,
             can_register: bigMatchInfo[i].can_register,
-            unit_price: bigMatchInfo[i].unit_price,
+            face_price: bigMatchInfo[i].face_price,
             need_exchange: bigMatchInfo[i].need_exchange,
             exchangeRate_id: bigMatchInfo[i].exchangerate_id,
-            state: bigMatchInfo[i].state,
+            state: 3,
             style: '',
             remark: bigMatchInfo[i].remark,
             isPromoted: bigMatchInfo[i].ispromoted,
@@ -337,7 +370,7 @@ function setInfo(req, res) {
         const id = req.query.id
 
         const opts = {
-            attributes: ['bigMatch_id', 'name', 'state', 'match_day', 'matchSetting_id', 'can_register', 'isPromoted', 'haveMatchSetting', 'haveMatchBonus', 'haveMatchResult'],
+            attributes: ['bigMatch_id', 'name', 'state', 'match_day', 'matchSetting_id', 'can_register', 'face_price', 'unit_price', 'isPromoted', 'haveMatchSetting', 'haveMatchBonus', 'haveMatchResult'],
             where: {bigMatch_id: id}
         }
 

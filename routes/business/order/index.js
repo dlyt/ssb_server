@@ -52,7 +52,7 @@ function query(req, res) {
               var endTime = new Date(req.body.endTime)
               query.push({used_time : {$lte: endTime}})
         }
-        
+
 
         const include = [{
             model: User, attributes: ['realname', 'mobile'],

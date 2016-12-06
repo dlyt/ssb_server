@@ -25,9 +25,13 @@ module.exports = (db) => {
             type: Sequelize.TIME,
             allowNull: false
         },
-        unit_price: {
+        face_price: {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false
+        },
+        unit_price: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: true
         },
         state: {
             type: Sequelize.INTEGER,

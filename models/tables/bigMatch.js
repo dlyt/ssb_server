@@ -41,9 +41,13 @@ module.exports = (db) => {
             type: Sequelize.BOOLEAN,
             allowNull: false
         },
-        unit_price: {
+        face_price: {
             type: Sequelize.DECIMAL(10, 2),
             allowNull: false
+        },
+        unit_price: {
+            type: Sequelize.DECIMAL(10, 2),
+            allowNull: true
         },
         need_exchange: {
             type: Sequelize.BOOLEAN,
