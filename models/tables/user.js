@@ -34,7 +34,7 @@ module.exports = (db) => {
         wechat_unionid: {
             type: Sequelize.STRING(128)
         },
-        userPoint: {
+        userPoints: {
             type: Sequelize.INTEGER,
             defaultValue: 0
         },
